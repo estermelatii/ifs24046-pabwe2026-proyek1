@@ -57,6 +57,7 @@ export default function App() {
           <Route path="/lacak/:code" element={<Track />} />
           <Route path="/riwayat" element={<History />} />
           <Route path="/akun" element={<Account />} />
+          <Route path="/auth/login" element={<Account />} />
           <Route path="/about" element={<About />} />
           <Route path="/kontak" element={<Contact />} />
         </Routes>
