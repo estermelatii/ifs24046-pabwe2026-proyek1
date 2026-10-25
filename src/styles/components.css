@@ -34,7 +34,7 @@
 .thumbs button{padding:0;border:0;background:none;cursor:pointer;border-radius:14px}
 .thumbs .on .pic{border-color:var(--rose)}
 .thumbs .pic{padding:4px;border-radius:12px}
-.badge{font:600 .72rem 'Inter';padding:3px 10px;border-radius:99px;vertical-align:middle;margin-left:8px}
+.badge{font:600 .72rem 'Inter',sans-serif;padding:3px 10px;border-radius:99px;vertical-align:middle;margin-left:8px}
 .stars{color:#d9a441;letter-spacing:1px}
 .qty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:99px;background:var(--card)}
 .qty button{border:0;background:none;width:34px;height:34px;font-size:1.15rem;color:var(--rose);cursor:pointer}
