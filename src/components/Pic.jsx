@@ -2,7 +2,6 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import Bouquet from "./Bouquet.jsx";
 
-// Foto produk; bila foto gagal dimuat, diganti ilustrasi SVG.
 export function Pic({ hex, seed, big, src }) {
   const [photoFailed, setPhotoFailed] = useState(false);
   const showPhoto = src && !photoFailed;

@@ -108,3 +108,4 @@ AccountDashboard.propTypes = {
   welcomeMode: PropTypes.string,
   onDismissWelcome: PropTypes.func,
 };
+

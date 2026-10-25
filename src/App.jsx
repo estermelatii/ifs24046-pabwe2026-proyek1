@@ -1,41 +1,38 @@
-import { Suspense, lazy, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { Route, Routes, useLocation } from 'react-router-dom';
-import { AUTH_EXPIRED_EVENT, STORAGE_KEYS } from './config.js';
-import { fetchMe, logout } from './features/auth/authSlice.js';
-import { Header } from './components/layout/Header.jsx';
-import { Footer } from './components/layout/Footer.jsx';
-import { TabBar } from './components/layout/TabBar.jsx';
-import { ErrorBoundary } from './components/ErrorBoundary.jsx';
-import { RequireAuth } from './components/RequireAuth.jsx';
+import { Suspense, lazy, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { Route, Routes, useLocation } from "react-router-dom";
+import { AUTH_EXPIRED_EVENT, STORAGE_KEYS } from "./config.js";
+import { fetchMe, logout } from "./features/auth/authSlice.js";
+import { Header } from "./components/layout/Header.jsx";
+import { Footer } from "./components/layout/Footer.jsx";
+import { TabBar } from "./components/layout/TabBar.jsx";
+import { ErrorBoundary } from "./components/ErrorBoundary.jsx";
+import { RequireAuth } from "./components/RequireAuth.jsx";
 
-// Setiap halaman dimuat saat dibutuhkan (code splitting) supaya bundle awal lebih kecil.
 const lazyPage = (importer, exportName) => lazy(() => importer().then((module) => ({ default: module[exportName] })));
 
-const Home = lazyPage(() => import('./features/home/Home.jsx'), 'Home');
-const Shop = lazyPage(() => import('./features/catalog/Shop.jsx'), 'Shop');
-const Product = lazyPage(() => import('./features/catalog/Product.jsx'), 'Product');
-const Find = lazyPage(() => import('./features/quiz/Find.jsx'), 'Find');
-const Cart = lazyPage(() => import('./features/cart/Cart.jsx'), 'Cart');
-const Checkout = lazyPage(() => import('./features/checkout/Checkout.jsx'), 'Checkout');
-const Success = lazyPage(() => import('./features/orders/Success.jsx'), 'Success');
-const Track = lazyPage(() => import('./features/orders/Track.jsx'), 'Track');
-const History = lazyPage(() => import('./features/orders/History.jsx'), 'History');
-const Account = lazyPage(() => import('./features/account/Account.jsx'), 'Account');
-const About = lazyPage(() => import('./features/static/About.jsx'), 'About');
-const Contact = lazyPage(() => import('./features/static/Contact.jsx'), 'Contact');
-const NotFound = lazyPage(() => import('./features/static/NotFound.jsx'), 'NotFound');
+const Home = lazyPage(() => import("./features/home/Home.jsx"), "Home");
+const Shop = lazyPage(() => import("./features/catalog/Shop.jsx"), "Shop");
+const Product = lazyPage(() => import("./features/catalog/Product.jsx"), "Product");
+const Find = lazyPage(() => import("./features/quiz/Find.jsx"), "Find");
+const Cart = lazyPage(() => import("./features/cart/Cart.jsx"), "Cart");
+const Checkout = lazyPage(() => import("./features/checkout/Checkout.jsx"), "Checkout");
+const Success = lazyPage(() => import("./features/orders/Success.jsx"), "Success");
+const Track = lazyPage(() => import("./features/orders/Track.jsx"), "Track");
+const History = lazyPage(() => import("./features/orders/History.jsx"), "History");
+const Account = lazyPage(() => import("./features/account/Account.jsx"), "Account");
+const About = lazyPage(() => import("./features/static/About.jsx"), "About");
+const Contact = lazyPage(() => import("./features/static/Contact.jsx"), "Contact");
+const NotFound = lazyPage(() => import("./features/static/NotFound.jsx"), "NotFound");
 
 export default function App() {
   const dispatch = useDispatch();
   const { pathname } = useLocation();
 
-  // Pulihkan sesi login bila token masih tersimpan.
   useEffect(() => {
     if (localStorage.getItem(STORAGE_KEYS.token)) dispatch(fetchMe());
   }, [dispatch]);
 
-  // Server menolak token (kedaluwarsa/dicabut): keluarkan pengguna.
   useEffect(() => {
     const handleAuthExpired = () => dispatch(logout());
     globalThis.addEventListener(AUTH_EXPIRED_EVENT, handleAuthExpired);
@@ -73,5 +70,3 @@ export default function App() {
     </>
   );
 }
-
-

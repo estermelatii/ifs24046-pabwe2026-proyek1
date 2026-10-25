@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { selectUser } from "../features/auth/authSlice.js";
 
-// Guard rute: hanya merender halaman bila pengguna sudah masuk.
 export function RequireAuth({ title, purpose, children }) {
   const user = useSelector(selectUser);
   if (user) return children;

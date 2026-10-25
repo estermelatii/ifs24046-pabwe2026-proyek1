@@ -123,3 +123,4 @@ ProductDetail.propTypes = {
   reviews: PropTypes.array,
 };
 
+

@@ -1,13 +1,11 @@
 import PropTypes from "prop-types";
 
-// Ilustrasi buket dibuat dengan SVG (tanpa foto) agar warna bisa mengikuti pilihan variasi.
 const ACCENT_COLORS = ["#fbf6ee", "#f6cf5c", "#ffffff", "#f4b6c4"];
 const LEAF_COUNT = 7;
 const FLOWER_COUNT = 9;
 const DOT_COUNT = 14;
 
 export default function Bouquet({ color = "#f2a7bb", seed = 1 }) {
-  // Generator acak sederhana berbasis seed supaya tiap produk punya susunan bunga yang tetap.
   let randomState = seed * 131 + 7;
   const nextRandom = () => {
     randomState = (randomState * 9301 + 49297) % 233280;

@@ -1,7 +1,6 @@
 import { Component } from "react";
 import PropTypes from "prop-types";
 
-// Menangkap error render (termasuk gagal memuat halaman lazy) agar aplikasi tidak blank.
 export class ErrorBoundary extends Component {
   state = { hasError: false };
 

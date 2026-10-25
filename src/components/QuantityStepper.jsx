@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 
-// Tombol tambah/kurang jumlah. Tombol dinonaktifkan di batas min/max (mis. stok habis).
 export function QuantityStepper({ value, min, max, onChange }) {
   return (
     <div className="qty">
