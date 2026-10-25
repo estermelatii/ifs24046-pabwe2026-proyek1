@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { screen, fireEvent } from "@testing-library/react";
+import { screen, fireEvent, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App from "./App.jsx";
 import { renderWithProviders, mockFetch, product, list, cats, order, cartItem, userState } from "./test-utils.jsx";
@@ -37,6 +37,22 @@ describe("App", () => {
     renderWithProviders(<App />);
     await screen.findByText("Buket 1");
     await screen.findByText("B", { selector: ".avatar" });
+  });
+
+  it("mengeluarkan pengguna saat sesi dinyatakan berakhir", async () => {
+    localStorage.setItem("fg-token", "t");
+    mockFetch(routes());
+    renderWithProviders(<App />);
+    await screen.findByText("B", { selector: ".avatar" });
+    act(() => { window.dispatchEvent(new Event("auth:expired")); });
+    expect(document.querySelector(".avatar")).toBeNull();
+    expect(localStorage.getItem("fg-token")).toBeNull();
+  });
+
+  it("rute /riwayat dilindungi dan terbuka untuk pengguna yang sudah masuk", async () => {
+    mockFetch(routes());
+    renderWithProviders(<App />, { route: "/riwayat", preloadedState: userState });
+    expect(await screen.findByText("FG2026100001")).toBeInTheDocument();
   });
 
   it("pencarian membuka halaman Shop", async () => {

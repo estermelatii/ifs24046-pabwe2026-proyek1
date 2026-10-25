@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { selectCount } from '../../features/cart/cartSlice.js';
+import { selectUser } from '../../features/auth/authSlice.js';
 import { Icon } from '../Icon.jsx';
 
 const MENU_LINKS = [
@@ -15,7 +16,7 @@ const MENU_LINKS = [
 export function Header() {
   const navigate = useNavigate();
   const cartCount = useSelector(selectCount);
-  const user = useSelector((state) => state.auth.user);
+  const user = useSelector(selectUser);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 

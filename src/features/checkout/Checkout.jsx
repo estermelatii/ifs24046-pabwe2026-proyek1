@@ -4,7 +4,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { rupiah } from '../../helpers/format.js';
 import { COURIERS, PAYMENT_METHODS } from '../../helpers/constants.js';
 import { createOrder } from '../../services/orderService.js';
-import { clearCart, selectSubtotal } from '../cart/cartSlice.js';
+import { clearCart, selectCartItems, selectSubtotal } from '../cart/cartSlice.js';
+import { selectUser } from '../auth/authSlice.js';
 
 const STEP_LABELS = ['Informasi', 'Pengiriman', 'Pembayaran'];
 const LAST_STEP = STEP_LABELS.length;
@@ -76,9 +77,9 @@ function PaymentStep({ form, onSelect }) {
 export function Checkout() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const cartItems = useSelector((state) => state.cart.items);
+  const cartItems = useSelector(selectCartItems);
   const subtotal = useSelector(selectSubtotal);
-  const user = useSelector((state) => state.auth.user);
+  const user = useSelector(selectUser);
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');

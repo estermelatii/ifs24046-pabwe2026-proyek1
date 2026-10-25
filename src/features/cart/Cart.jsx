@@ -2,13 +2,36 @@ import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { rupiah } from '../../helpers/format.js';
 import { ESTIMATED_SHIPPING_COST } from '../../helpers/constants.js';
-import { Pic } from '../../components/ui.jsx';
+import { Pic } from '../../components/Pic.jsx';
 import { QuantityStepper } from '../../components/QuantityStepper.jsx';
-import { setQty, removeItem, selectSubtotal } from './cartSlice.js';
+import { setQty, removeItem, selectCartItems, selectSubtotal } from './cartSlice.js';
+
+function CartRow({ item, onQuantityChange, onRemove }) {
+  return (
+    <tr>
+      <td>
+        <div className="prod">
+          <div className="mini"><Pic hex={item.color.hex} seed={item.id} src={`/foto/${item.id}-1.jpg`} /></div>
+          <div><b>{item.name}</b><p className="muted small">Warna: {item.color.name}</p></div>
+        </div>
+      </td>
+      <td>{rupiah(item.price)}</td>
+      <td>
+        <QuantityStepper
+          value={item.qty}
+          onDecrease={() => onQuantityChange(item.qty - 1)}
+          onIncrease={() => onQuantityChange(item.qty + 1)}
+        />
+      </td>
+      <td><b>{rupiah(item.price * item.qty)}</b></td>
+      <td><button className="link" onClick={onRemove}>Hapus</button></td>
+    </tr>
+  );
+}
 
 export function Cart() {
   const dispatch = useDispatch();
-  const items = useSelector((state) => state.cart.items);
+  const items = useSelector(selectCartItems);
   const subtotal = useSelector(selectSubtotal);
 
   if (!items.length) {
@@ -26,20 +49,16 @@ export function Cart() {
       <div className="cols">
         <table className="tbl">
           <thead><tr><th>Produk</th><th>Harga</th><th>Kuantitas</th><th>Subtotal</th><th /></tr></thead>
-          <tbody>{items.map((item) => (
-            <tr key={item.key}>
-              <td><div className="prod"><div className="mini"><Pic hex={item.color.hex} seed={item.id} src={`/foto/${item.id}-1.jpg`} /></div><div><b>{item.name}</b><p className="muted small">Warna: {item.color.name}</p></div></div></td>
-              <td>{rupiah(item.price)}</td>
-              <td>
-                <QuantityStepper
-                  value={item.qty}
-                  onDecrease={() => dispatch(setQty({ key: item.key, qty: item.qty - 1 }))}
-                  onIncrease={() => dispatch(setQty({ key: item.key, qty: item.qty + 1 }))}
-                />
-              </td>
-              <td><b>{rupiah(item.price * item.qty)}</b></td>
-              <td><button className="link" onClick={() => dispatch(removeItem(item.key))}>Hapus</button></td>
-            </tr>))}</tbody>
+          <tbody>
+            {items.map((item) => (
+              <CartRow
+                key={item.key}
+                item={item}
+                onQuantityChange={(qty) => dispatch(setQty({ key: item.key, qty }))}
+                onRemove={() => dispatch(removeItem(item.key))}
+              />
+            ))}
+          </tbody>
         </table>
         <aside className="box">
           <h3>Ringkasan Belanja</h3>

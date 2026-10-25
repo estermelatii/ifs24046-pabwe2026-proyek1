@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { rupiah } from '../../helpers/format.js';
 import { ORDER_STATUSES, STATUS_SHIPPED } from '../../helpers/constants.js';
 import { ADMIN_WHATSAPP_URL } from '../../config.js';
 import { fetchMyOrders, markOrderReceived } from '../../services/orderService.js';
-import { Pic } from '../../components/ui.jsx';
+import { Pic } from '../../components/Pic.jsx';
 import { addItem } from '../cart/cartSlice.js';
 
 const ALL_STATUSES = 'Semua';
@@ -33,7 +33,6 @@ function OrderCard({ order, onReceived, onReorder }) {
 }
 
 export function History() {
-  const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [orders, setOrders] = useState(null);
@@ -43,17 +42,8 @@ export function History() {
   const loadOrders = () => fetchMyOrders().then(setOrders).catch((err) => setError(err.message));
 
   useEffect(() => {
-    if (user) loadOrders();
-  }, [user]);
-
-  if (!user) {
-    return (
-      <section className="wrap">
-        <h1 className="page-title">Riwayat Pesanan</h1>
-        <p className="notice">Masuk dulu untuk melihat riwayat pesananmu. <Link to="/akun">Masuk atau daftar</Link></p>
-      </section>
-    );
-  }
+    loadOrders();
+  }, []);
 
   const visibleOrders = orders?.filter((order) => activeStatus === ALL_STATUSES || order.status === activeStatus);
 

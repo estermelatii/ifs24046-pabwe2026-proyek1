@@ -14,11 +14,6 @@ const app = (
 const orders = [order({ status: "Sedang Dikirim" }), order({ id: 2, code: "FG2026100002", status: "Selesai" })];
 
 describe("History", () => {
-  it("meminta login bila belum masuk", () => {
-    renderWithProviders(app, { route: "/riwayat" });
-    expect(screen.getByText(/Masuk dulu/)).toBeInTheDocument();
-  });
-
   it("menampilkan, memfilter, dan menerima pesanan", async () => {
     const fn = mockFetch([["POST /api/orders/FG2026100001/received", { status: "Selesai" }], ["GET /api/my/orders", orders]]);
     renderWithProviders(app, { route: "/riwayat", preloadedState: userState });

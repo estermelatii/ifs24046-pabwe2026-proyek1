@@ -6,7 +6,8 @@ import { STATUS_COMPLETED } from '../../helpers/constants.js';
 import useFetch from '../../hooks/useFetch.js';
 import { fetchPopularProducts } from '../../services/productService.js';
 import { fetchMyOrders } from '../../services/orderService.js';
-import { Status, Card } from '../../components/ui.jsx';
+import { Status } from '../../components/Status.jsx';
+import { ProductCard } from '../../components/ProductCard.jsx';
 import { logout } from '../auth/authSlice.js';
 
 const describeItems = (order) => order.items.map((item) => `${item.name} ×${item.quantity}`).join(', ');
@@ -75,7 +76,7 @@ export function AccountDashboard({ user, welcomeMode, onDismissWelcome }) {
         ) : <p className="notice">{orders ? 'Kamu belum punya pesanan. Yuk pilih buket pertamamu.' : 'Memuat…'}</p>}
         <div className="between" style={{ marginTop: 40 }}><h2>Pilihan Untukmu</h2><Link to="/toko">Lihat semua →</Link></div>
         <Status data={popularProducts} error="">
-          {popularProducts && <div className="grid">{popularProducts.items.map((product) => <Card key={product.id} product={product} />)}</div>}
+          {popularProducts && <div className="grid">{popularProducts.items.map((product) => <ProductCard key={product.id} product={product} />)}</div>}
         </Status>
       </section>
     </>

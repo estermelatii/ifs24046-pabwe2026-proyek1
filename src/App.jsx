@@ -1,52 +1,70 @@
-import { useEffect } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { Route, Routes } from 'react-router-dom';
-import { STORAGE_KEYS } from './config.js';
-import { fetchMe } from './features/auth/authSlice.js';
+import { Route, Routes, useLocation } from 'react-router-dom';
+import { AUTH_EXPIRED_EVENT, STORAGE_KEYS } from './config.js';
+import { fetchMe, logout } from './features/auth/authSlice.js';
 import { Header } from './components/layout/Header.jsx';
 import { Footer } from './components/layout/Footer.jsx';
 import { TabBar } from './components/layout/TabBar.jsx';
-import { Home } from './features/home/Home.jsx';
-import { Shop } from './features/catalog/Shop.jsx';
-import { Product } from './features/catalog/Product.jsx';
-import { Find } from './features/quiz/Find.jsx';
-import { Cart } from './features/cart/Cart.jsx';
-import { Checkout } from './features/checkout/Checkout.jsx';
-import { Success } from './features/orders/Success.jsx';
-import { Track } from './features/orders/Track.jsx';
-import { History } from './features/orders/History.jsx';
-import { Account } from './features/account/Account.jsx';
-import { About } from './features/static/About.jsx';
-import { Contact } from './features/static/Contact.jsx';
+import { ErrorBoundary } from './components/ErrorBoundary.jsx';
+import { RequireAuth } from './components/RequireAuth.jsx';
+
+// Setiap halaman dimuat saat dibutuhkan (code splitting) supaya bundle awal lebih kecil.
+const lazyPage = (importer, exportName) => lazy(() => importer().then((module) => ({ default: module[exportName] })));
+
+const Home = lazyPage(() => import('./features/home/Home.jsx'), 'Home');
+const Shop = lazyPage(() => import('./features/catalog/Shop.jsx'), 'Shop');
+const Product = lazyPage(() => import('./features/catalog/Product.jsx'), 'Product');
+const Find = lazyPage(() => import('./features/quiz/Find.jsx'), 'Find');
+const Cart = lazyPage(() => import('./features/cart/Cart.jsx'), 'Cart');
+const Checkout = lazyPage(() => import('./features/checkout/Checkout.jsx'), 'Checkout');
+const Success = lazyPage(() => import('./features/orders/Success.jsx'), 'Success');
+const Track = lazyPage(() => import('./features/orders/Track.jsx'), 'Track');
+const History = lazyPage(() => import('./features/orders/History.jsx'), 'History');
+const Account = lazyPage(() => import('./features/account/Account.jsx'), 'Account');
+const About = lazyPage(() => import('./features/static/About.jsx'), 'About');
+const Contact = lazyPage(() => import('./features/static/Contact.jsx'), 'Contact');
 
 export default function App() {
   const dispatch = useDispatch();
+  const { pathname } = useLocation();
 
   // Pulihkan sesi login bila token masih tersimpan.
   useEffect(() => {
     if (localStorage.getItem(STORAGE_KEYS.token)) dispatch(fetchMe());
   }, [dispatch]);
 
+  // Server menolak token (kedaluwarsa/dicabut): keluarkan pengguna.
+  useEffect(() => {
+    const handleAuthExpired = () => dispatch(logout());
+    window.addEventListener(AUTH_EXPIRED_EVENT, handleAuthExpired);
+    return () => window.removeEventListener(AUTH_EXPIRED_EVENT, handleAuthExpired);
+  }, [dispatch]);
+
   return (
     <>
       <Header />
       <main>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/toko" element={<Shop />} />
-          <Route path="/produk/:id" element={<Product />} />
-          <Route path="/find" element={<Find />} />
-          <Route path="/keranjang" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/sukses/:code" element={<Success />} />
-          <Route path="/lacak" element={<Track />} />
-          <Route path="/lacak/:code" element={<Track />} />
-          <Route path="/riwayat" element={<History />} />
-          <Route path="/akun" element={<Account />} />
-          <Route path="/auth/login" element={<Account />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/kontak" element={<Contact />} />
-        </Routes>
+        <ErrorBoundary key={pathname}>
+          <Suspense fallback={<p className="notice">Memuat…</p>}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/toko" element={<Shop />} />
+              <Route path="/produk/:id" element={<Product />} />
+              <Route path="/find" element={<Find />} />
+              <Route path="/keranjang" element={<Cart />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/sukses/:code" element={<Success />} />
+              <Route path="/lacak" element={<Track />} />
+              <Route path="/lacak/:code" element={<Track />} />
+              <Route path="/riwayat" element={<RequireAuth title="Riwayat Pesanan" purpose="riwayat pesananmu"><History /></RequireAuth>} />
+              <Route path="/akun" element={<Account />} />
+              <Route path="/auth/login" element={<Account />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/kontak" element={<Contact />} />
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
       </main>
       <Footer />
       <TabBar />

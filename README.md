@@ -29,6 +29,20 @@ npm run dev               # http://localhost:5173
 ```
 `.env` berisi `VITE_API_URL=http://localhost:3000` (alamat back-end). Jalankan back-end lebih dulu.
 
+## Keamanan: token login
+Token sesi disimpan di `localStorage` (`fg-token`). Konsekuensinya, token bisa dibaca skrip apa pun
+yang berjalan di halaman bila terjadi XSS, berbeda dengan cookie `HttpOnly`. Mitigasi yang dipakai:
+
+- Token adalah string acak yang disimpan di tabel `sessions` server (bukan JWT), sehingga bisa dicabut dari server.
+- Tidak ada `dangerouslySetInnerHTML`/`innerHTML`; React meng-escape semua keluaran.
+- Bila server membalas 401 untuk permintaan bertoken, `apiClient` mengirim event `auth:expired`
+  dan `App` otomatis mengeluarkan pengguna serta menghapus token.
+- Header `X-Content-Type-Options`, `X-Frame-Options`, dan `Referrer-Policy` dipasang lewat `vercel.json`.
+- Halaman yang butuh login dilindungi guard rute `RequireAuth`; error render ditangkap `ErrorBoundary`.
+
+Pengembangan lanjutan yang disarankan: pindahkan token ke cookie `HttpOnly` + `SameSite` dari back-end,
+beri masa berlaku pada sesi di server, dan tambahkan Content-Security-Policy.
+
 ## Tes dan coverage
 ```bash
 npm test                  # vitest run

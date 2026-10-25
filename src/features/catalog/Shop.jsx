@@ -1,7 +1,8 @@
 import { useSearchParams } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch.js';
 import { fetchCategories, fetchProducts } from '../../services/productService.js';
-import { Status, Card } from '../../components/ui.jsx';
+import { Status } from '../../components/Status.jsx';
+import { ProductCard } from '../../components/ProductCard.jsx';
 import { ColorSwatches } from '../../components/ColorSwatches.jsx';
 import { BOUQUET_STYLES, FLOWER_COLORS, SORT_OPTIONS } from '../../helpers/constants.js';
 
@@ -85,7 +86,7 @@ export function Shop() {
           </div>
           <Status data={catalog} error={error}>
             {catalog?.items.length
-              ? <div className="grid three">{catalog.items.map((product) => <Card key={product.id} product={product} />)}</div>
+              ? <div className="grid three">{catalog.items.map((product) => <ProductCard key={product.id} product={product} />)}</div>
               : <p className="notice">Tidak ada buket yang cocok. Coba ubah atau hapus filter.</p>}
             {catalog?.pages > 1 && (
               <div className="pager">

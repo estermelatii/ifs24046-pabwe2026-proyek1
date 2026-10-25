@@ -32,6 +32,8 @@ const authSlice = createSlice({
   },
 });
 
+export const selectUser = (state) => state.auth.user;
+
 export const logout = () => (dispatch) => {
   localStorage.removeItem(STORAGE_KEYS.token);
   dispatch(authSlice.actions.clearUser());

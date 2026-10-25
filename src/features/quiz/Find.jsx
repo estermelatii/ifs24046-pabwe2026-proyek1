@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import useFetch from '../../hooks/useFetch.js';
 import { fetchCategories, fetchRecommendations } from '../../services/productService.js';
-import { Card } from '../../components/ui.jsx';
+import { ProductCard } from '../../components/ProductCard.jsx';
 import { BOUQUET_STYLES } from '../../helpers/constants.js';
 
 const BUDGET_OPTIONS = [
@@ -45,7 +45,7 @@ export function Find() {
     return (
       <section className="wrap">
         <h1 className="page-title">Rekomendasi untukmu</h1><p className="muted">Buket yang paling cocok dengan jawabanmu.</p>
-        <div className="grid">{recommendations.map((product) => <Card key={product.id} product={product} />)}</div>
+        <div className="grid">{recommendations.map((product) => <ProductCard key={product.id} product={product} />)}</div>
         <button className="btn ghost" onClick={restart}>Ulangi kuis</button>
       </section>
     );

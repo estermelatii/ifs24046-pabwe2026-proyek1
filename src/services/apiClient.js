@@ -1,4 +1,4 @@
-import { API_BASE_URL, STORAGE_KEYS } from '../config.js';
+import { API_BASE_URL, AUTH_EXPIRED_EVENT, STORAGE_KEYS } from '../config.js';
 
 // Klien HTTP tunggal: menambahkan token login, mengirim JSON, dan menyeragamkan pesan error.
 export async function api(path, { method, body } = {}) {
@@ -9,6 +9,10 @@ export async function api(path, { method, body } = {}) {
     body: body ? JSON.stringify(body) : undefined,
   });
   const data = await response.json();
-  if (!response.ok) throw new Error(data.error || 'Terjadi kesalahan');
+  if (!response.ok) {
+    // Token ditolak server: beri tahu aplikasi agar sesi dibersihkan.
+    if (response.status === 401 && token) window.dispatchEvent(new Event(AUTH_EXPIRED_EVENT));
+    throw new Error(data.error || 'Terjadi kesalahan');
+  }
   return data;
 }
