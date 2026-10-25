@@ -72,10 +72,10 @@ export function Account() {
       <h1 className="page-title">{mode === 'login' ? 'Masuk' : 'Daftar'}</h1>
       <form className="box form" onSubmit={submit}>
         {mode === 'register' && <label>Nama<input required value={f.name} onChange={set('name')} /></label>}
-        <label>Email<input required type="email" value={f.email} onChange={set('email')} /></label>
-        <label>Password<input required type="password" minLength="6" value={f.password} onChange={set('password')} /></label>
+        <label>Email<input id="username" required type="email" value={f.email} onChange={set('email')} /></label>
+        <label>Password<input id="password" required type="password" minLength="6" value={f.password} onChange={set('password')} /></label>
         {error && <p className="error">{error}</p>}
-        <button className="btn full">{mode === 'login' ? 'Masuk' : 'Buat akun'}</button>
+        <button id="btn-submit" className="btn full">{mode === 'login' ? 'Masuk' : 'Buat akun'}</button>
         <button type="button" className="link" onClick={() => setMode(mode === 'login' ? 'register' : 'login')}>{mode === 'login' ? 'Belum punya akun? Daftar' : 'Sudah punya akun? Masuk'}</button>
       </form>
     </section>
