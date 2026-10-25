@@ -1,0 +1,86 @@
+/* Komponen bersama: tombol, kartu, form, badge, filter, dsb. */
+.ic{width:22px;height:22px}
+.muted{color:var(--muted);margin:2px 0}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.row.mid{justify-content:center;margin-top:24px}
+.between{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.btn{display:inline-block;border:1px solid var(--rose);padding:11px 24px;border-radius:99px;text-decoration:none;font-weight:600;font-size:.93rem;cursor:pointer;text-align:center}
+.btn.full{width:100%;margin-top:12px}
+.btn.sm{padding:6px 16px;font-size:.84rem}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:24px}
+.grid.three{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+.card{text-decoration:none;color:var(--ink)}
+.card h3{font-size:1.3rem;margin-top:10px}
+.card .price{margin:2px 0}
+.pic{aspect-ratio:4/5;border-radius:18px;display:grid;place-items:center;padding:8%;border:1px solid var(--line);transition:transform .25s}
+.pic svg{width:100%;height:100%}
+.pic.big{aspect-ratio:1;padding:6%}
+.card:hover .pic{transform:translateY(-3px)}
+.mini{width:56px;flex:none}
+.mini .pic{border-radius:10px;padding:3px}
+.price{color:var(--rose);font-weight:600}
+.price.big{font-size:1.6rem}
+.chk{display:flex;gap:8px;align-items:center;font-size:.9rem;margin:6px 0;cursor:pointer}
+.chk input{accent-color:var(--rose)}
+.swatches{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
+.swatches button{width:26px;height:26px;border-radius:50%;border:1px solid #0002;cursor:pointer;padding:0}
+.swatches button.on{outline:2px solid var(--rose);outline-offset:2px}
+.search,.form input,.form textarea{padding:9px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);font:inherit;color:var(--ink)}
+.pager{display:flex;gap:8px;justify-content:center;margin-top:30px}
+.pager button{width:36px;height:36px;border-radius:8px;border:1px solid var(--line);background:var(--card);cursor:pointer}
+.pager .on{background:var(--rose);color:#fff;border-color:var(--rose)}
+.thumbs{display:grid;gap:10px;align-content:start}
+.thumbs button{padding:0;border:0;background:none;cursor:pointer;border-radius:14px}
+.thumbs .on .pic{border-color:var(--rose)}
+.thumbs .pic{padding:4px;border-radius:12px}
+.badge{font:600 .72rem 'Inter';padding:3px 10px;border-radius:99px;vertical-align:middle;margin-left:8px}
+.stars{color:#d9a441;letter-spacing:1px}
+.qty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:99px;background:var(--card)}
+.qty button{border:0;background:none;width:34px;height:34px;font-size:1.15rem;color:var(--rose);cursor:pointer}
+.qty span{min-width:24px;text-align:center}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;font-size:.85rem;color:var(--muted);font-weight:600;padding:8px;border-bottom:1px solid var(--line)}
+.tbl td{padding:14px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.prod{display:flex;gap:12px;align-items:center}
+.prod .mini{width:64px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:16px}
+.box h3{font-size:1.5rem;margin-bottom:8px}
+.total{border-top:1px solid var(--line);padding-top:12px;margin-top:12px;font-size:1.08rem}
+.between p,p.between{margin:7px 0}
+.link{background:none;border:0;color:var(--rose);cursor:pointer;text-decoration:underline;padding:6px 0}
+.link:disabled{opacity:.4}
+.form{display:grid;gap:14px}
+.form label{display:grid;gap:5px;font-size:.9rem;color:var(--muted)}
+.form .chk{display:flex}
+.form input[type=radio]{width:auto}
+.notice{background:var(--card);border:1px dashed var(--line);border-radius:14px;padding:22px;text-align:center;color:var(--muted)}
+.error{margin:8px 0}
+.chips{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 22px}
+.chip{border:1px solid var(--line);background:var(--card);padding:6px 16px;border-radius:99px;cursor:pointer;font-size:.88rem}
+.chip.on{background:var(--rose);color:#fff;border-color:var(--rose)}
+.pill{background:var(--blush);color:var(--rose);padding:3px 12px;border-radius:99px;font-size:.8rem;font-weight:600}
+.foot .sub-heading{color:var(--ink);margin-top:0}
+@media(max-width:800px){
+  .tbl thead{display:none}
+  .tbl tr{display:grid;grid-template-columns:1fr auto;gap:6px;padding:12px 0;border-bottom:1px solid var(--line)}
+  .tbl td{border:0;padding:2px}
+  .tbl td:first-child{grid-column:1/-1}
+}
+.pic.photo{padding:0;overflow:hidden;background:none!important}
+.pic.photo img{width:100%;height:100%;object-fit:cover;display:block}
+.search,.form input,.form textarea{background:rgba(255,255,255,.07);color:var(--ink);border:1px solid var(--line)}
+.btn{background:#fbeee6;color:#4a0407;border-color:#fbeee6}
+.btn:hover{background:#fff}
+.btn.ghost{background:transparent;color:#fbeee6;border-color:#fbeee680}
+.btn.ghost:hover{background:#ffffff1a}
+.btn.lg{padding:14px 32px;font-size:1rem}
+.chip.on,.pager .on{color:#3a0509}
+.error{color:#ff9d95}
+.badge{background:#2f5a3f;color:#d6f1de}
+.badge.out{background:#6b2020;color:#ffd3d0}
+.pic{box-shadow:0 14px 30px #00000040}
+.card:hover .pic{box-shadow:0 20px 40px #00000066}
+.eyebrow{display:inline-flex;align-items:center;gap:12px;color:var(--muted);font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px}
+.eyebrow::before{content:'';width:34px;height:1px;background:currentColor}
+.sub-heading{margin:18px 0 8px;font-family:inherit;font-size:.95rem;font-weight:700}

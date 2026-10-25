@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { rupiah } from '../../helpers/format.js';
 import { COURIERS, PAYMENT_METHODS } from '../../helpers/constants.js';
+import { LIMITS, MAX_DELIVERY_DAYS_AHEAD, PHONE_HINT, PHONE_PATTERN } from '../../helpers/validation.js';
 import { createOrder } from '../../services/orderService.js';
 import { clearCart, selectCartItems, selectSubtotal } from '../cart/cartSlice.js';
 import { selectUser } from '../auth/authSlice.js';
@@ -10,7 +11,11 @@ import { selectUser } from '../auth/authSlice.js';
 const STEP_LABELS = ['Informasi', 'Pengiriman', 'Pembayaran'];
 const LAST_STEP = STEP_LABELS.length;
 
-const todayIsoDate = () => new Date().toISOString().slice(0, 10);
+const isoDateFromToday = (daysAhead) => {
+  const date = new Date();
+  date.setDate(date.getDate() + daysAhead);
+  return date.toISOString().slice(0, 10);
+};
 
 const submitLabel = (step, isSubmitting) => {
   if (step === 1) return 'Lanjut ke Pengiriman';
@@ -27,9 +32,9 @@ function CustomerStep({ form, onInput }) {
   return (
     <>
       <h3>Informasi Pelanggan</h3>
-      <label>Nama lengkap<input required value={form.customer_name} onChange={onInput('customer_name')} /></label>
-      <label>Nomor telepon<input required inputMode="tel" value={form.phone} onChange={onInput('phone')} /></label>
-      <label>Email<input required type="email" value={form.email} onChange={onInput('email')} /></label>
+      <label>Nama lengkap<input required minLength={LIMITS.name.min} maxLength={LIMITS.name.max} value={form.customer_name} onChange={onInput('customer_name')} /></label>
+      <label>Nomor telepon<input required type="tel" inputMode="tel" pattern={PHONE_PATTERN} title={PHONE_HINT} placeholder={PHONE_HINT} value={form.phone} onChange={onInput('phone')} /></label>
+      <label>Email<input required type="email" maxLength={LIMITS.email.max} value={form.email} onChange={onInput('email')} /></label>
     </>
   );
 }
@@ -38,8 +43,8 @@ function ShippingStep({ form, onInput, onSelect }) {
   return (
     <>
       <h3>Pengiriman</h3>
-      <label>Alamat lengkap<textarea required rows="3" value={form.address} onChange={onInput('address')} /></label>
-      <label>Kota<input required value={form.city} onChange={onInput('city')} /></label>
+      <label>Alamat lengkap<textarea required rows="3" minLength={LIMITS.address.min} maxLength={LIMITS.address.max} value={form.address} onChange={onInput('address')} /></label>
+      <label>Kota<input required minLength={LIMITS.city.min} maxLength={LIMITS.city.max} value={form.city} onChange={onInput('city')} /></label>
       <fieldset>
         <legend>Pilihan kurir</legend>
         {COURIERS.map((courier) => (
@@ -49,8 +54,8 @@ function ShippingStep({ form, onInput, onSelect }) {
           </label>
         ))}
       </fieldset>
-      <label>Tanggal pengiriman<input required type="date" min={todayIsoDate()} value={form.delivery_date} onChange={onInput('delivery_date')} /></label>
-      <label>Pesan kartu ucapan (opsional)<textarea rows="2" value={form.card_message} onChange={onInput('card_message')} /></label>
+      <label>Tanggal pengiriman<input required type="date" min={isoDateFromToday(0)} max={isoDateFromToday(MAX_DELIVERY_DAYS_AHEAD)} value={form.delivery_date} onChange={onInput('delivery_date')} /></label>
+      <label>Pesan kartu ucapan (opsional)<textarea rows="2" maxLength={LIMITS.cardMessage.max} value={form.card_message} onChange={onInput('card_message')} /></label>
     </>
   );
 }

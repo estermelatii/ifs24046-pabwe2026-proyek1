@@ -41,6 +41,17 @@ describe("Product", () => {
     expect(screen.getByText("2", { selector: ".qty span" })).toBeInTheDocument();
   });
 
+  it("stok habis: jumlah tidak bisa diubah dan tidak bisa ditambah ke keranjang", async () => {
+    withProduct(product(1, { stock: 0 }));
+    renderWithProviders(app, { route: "/produk/1" });
+    await screen.findByRole("heading", { name: "Buket 1" });
+    expect(screen.getByText("Stok Habis")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Tambah" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Kurangi" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Tambah ke Keranjang" })).toBeDisabled();
+    expect(screen.getByText("1", { selector: ".qty span" })).toBeInTheDocument();
+  });
+
   it("berpindah tab deskripsi, informasi, dan ulasan", async () => {
     withProduct(product(1));
     renderWithProviders(app, { route: "/produk/1" });

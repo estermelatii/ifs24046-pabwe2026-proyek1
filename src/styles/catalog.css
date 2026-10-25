@@ -1,0 +1,41 @@
+/* Katalog: toko, detail produk, kuis rekomendasi */
+.shop{display:grid;grid-template-columns:210px 1fr;gap:34px;margin-top:22px}
+.filters .sub-heading:first-child{margin-top:0}
+.toolbar{margin-bottom:16px}
+.crumb{font-size:.85rem;color:var(--muted)}
+.crumb a{color:var(--muted)}
+.detail{display:grid;grid-template-columns:1.05fr 1fr;gap:44px;align-items:start}
+.gallery{display:grid;grid-template-columns:78px 1fr;gap:14px}
+.desc{max-width:560px}
+.buy{margin-top:20px}
+.assure{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:32px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.assure div{display:grid;gap:2px;color:var(--rose)}
+.assure b{color:var(--ink);font-size:.92rem}
+.assure span{color:var(--muted);font-size:.84rem}
+.tabs{display:flex;gap:26px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.tabs button{background:none;border:0;padding:8px 0;cursor:pointer;color:var(--muted)}
+.tabs .on{color:var(--rose);border-bottom:2px solid var(--rose);font-weight:600}
+.info{display:grid;grid-template-columns:120px 1fr;gap:6px;max-width:400px}
+.info dt{color:var(--muted)}
+.info dd{margin:0}
+.rev{border-bottom:1px solid var(--line);padding:10px 0}
+.rev p{margin:2px 0}
+.quiz h2{font-size:1.7rem;margin:6px 0 16px}
+.progress{height:5px;background:var(--line);border-radius:9px;overflow:hidden;margin-bottom:10px}
+.progress i{display:block;height:100%;background:var(--rose);transition:width .3s}
+.opts{display:grid;gap:12px;margin-bottom:22px}
+.opts button{cursor:pointer;display:flex;gap:10px;align-items:center}
+@media(max-width:800px){
+  .detail,.shop{grid-template-columns:1fr}
+  .gallery{grid-template-columns:1fr}
+  .gallery .thumbs{grid-template-columns:repeat(3,70px);order:2}
+  .filters{display:grid;grid-template-columns:1fr 1fr;gap:0 20px}
+  .filters .sub-heading{grid-column:auto}
+}
+.opts button{color:var(--ink)}
+.opts{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.opts button{position:relative;justify-content:flex-start;text-align:left;padding:18px 20px 18px 54px;font:500 1.1rem 'Playfair Display',serif;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.04);transition:border-color .2s,background .2s}
+.opts button::before{content:'';position:absolute;left:20px;top:50%;width:16px;height:16px;margin-top:-8px;border-radius:50%;border:1px solid var(--rose)}
+.opts button:hover{border-color:var(--rose)}
+.opts button.on{border-color:var(--rose);background:rgba(241,195,184,.1)}
+.opts button.on::before{background:var(--rose);box-shadow:inset 0 0 0 3px #4f0b11}

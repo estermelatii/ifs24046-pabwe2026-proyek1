@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { rupiah } from '../../helpers/format.js';
 import { ORDER_STATUSES, LAST_ORDER_STEP } from '../../helpers/constants.js';
+import { LIMITS } from '../../helpers/validation.js';
 import { fetchOrder, updateOrderStatus } from '../../services/orderService.js';
 
 export function Track() {
@@ -36,7 +37,7 @@ export function Track() {
     <section className="wrap narrow">
       <h1 className="page-title">Lacak Pesanan</h1>
       <form className="row" onSubmit={handleSearch}>
-        <input className="search grow" placeholder="Contoh: FG2026100001" value={codeInput} onChange={(event) => setCodeInput(event.target.value)} /><button className="btn">Lacak</button>
+        <input className="search grow" placeholder="Contoh: FG2026100001" maxLength={LIMITS.orderCode.max} value={codeInput} onChange={(event) => setCodeInput(event.target.value)} /><button className="btn">Lacak</button>
       </form>
       {error && <p className="error">{error}</p>}
       {order && (

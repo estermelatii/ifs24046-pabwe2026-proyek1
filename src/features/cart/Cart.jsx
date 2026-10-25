@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { rupiah } from '../../helpers/format.js';
 import { ESTIMATED_SHIPPING_COST } from '../../helpers/constants.js';
+import { MAX_ORDER_QUANTITY } from '../../helpers/validation.js';
 import { Pic } from '../../components/Pic.jsx';
 import { QuantityStepper } from '../../components/QuantityStepper.jsx';
 import { setQty, removeItem, selectCartItems, selectSubtotal } from './cartSlice.js';
@@ -17,11 +18,7 @@ function CartRow({ item, onQuantityChange, onRemove }) {
       </td>
       <td>{rupiah(item.price)}</td>
       <td>
-        <QuantityStepper
-          value={item.qty}
-          onDecrease={() => onQuantityChange(item.qty - 1)}
-          onIncrease={() => onQuantityChange(item.qty + 1)}
-        />
+        <QuantityStepper value={item.qty} min={1} max={MAX_ORDER_QUANTITY} onChange={onQuantityChange} />
       </td>
       <td><b>{rupiah(item.price * item.qty)}</b></td>
       <td><button className="link" onClick={onRemove}>Hapus</button></td>

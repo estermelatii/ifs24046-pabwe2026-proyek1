@@ -24,6 +24,7 @@ const History = lazyPage(() => import('./features/orders/History.jsx'), 'History
 const Account = lazyPage(() => import('./features/account/Account.jsx'), 'Account');
 const About = lazyPage(() => import('./features/static/About.jsx'), 'About');
 const Contact = lazyPage(() => import('./features/static/Contact.jsx'), 'Contact');
+const NotFound = lazyPage(() => import('./features/static/NotFound.jsx'), 'NotFound');
 
 export default function App() {
   const dispatch = useDispatch();
@@ -62,6 +63,7 @@ export default function App() {
               <Route path="/auth/login" element={<Account />} />
               <Route path="/about" element={<About />} />
               <Route path="/kontak" element={<Contact />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
         </ErrorBoundary>

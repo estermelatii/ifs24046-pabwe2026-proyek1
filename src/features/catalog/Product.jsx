@@ -60,11 +60,7 @@ function ProductDetail({ product, reviews }) {
           <p className="muted small">Pilih warna: <b>{selectedColor.name}</b></p>
           <ColorSwatches colors={product.colors} selectedName={selectedColor.name} onSelect={(_, index) => setColorIndex(index)} />
           <div className="row buy">
-            <QuantityStepper
-              value={quantity}
-              onDecrease={() => setQuantity(Math.max(1, quantity - 1))}
-              onIncrease={() => setQuantity(Math.min(product.stock, quantity + 1))}
-            />
+            <QuantityStepper value={quantity} min={1} max={product.stock} onChange={setQuantity} />
             <button className="btn" disabled={product.stock < 1} onClick={addToCart}>Tambah ke Keranjang</button>
           </div>
         </div>

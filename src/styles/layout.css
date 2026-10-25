@@ -1,0 +1,41 @@
+/* Layout: navigasi, footer, tab bar mobile, kontainer halaman */
+.logo{font-family:'Playfair Display',Georgia,serif;font-weight:600;margin:0}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 5vw;position:sticky;top:0;backdrop-filter:blur(6px);z-index:5}
+.logo{font-size:1.8rem;text-decoration:none}
+.menu{display:flex;gap:28px}
+.menu a{text-decoration:none;color:var(--ink)}
+.menu a.active{font-weight:600}
+.icons{display:flex;gap:16px;align-items:center}
+.icons button,.icons a{background:none;border:0;cursor:pointer;color:var(--ink);position:relative;display:grid}
+.bag b,.tabbar b{position:absolute;top:-6px;right:-9px;background:var(--rose);color:#fff;border-radius:99px;font-size:.68rem;padding:0 6px}
+.mini-search{padding:7px 14px;border:1px solid var(--line);border-radius:99px;background:var(--card);font:inherit;width:170px}
+.wrap{padding:44px 5vw;max-width:1200px;margin:0 auto}
+.narrow{max-width:760px}
+.center{text-align:center}
+.cols{display:grid;grid-template-columns:1fr 340px;gap:32px;align-items:start;margin-top:20px}
+.foot{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:24px;padding:40px 5vw 20px;border-top:1px solid var(--line);font-size:.9rem;color:var(--muted)}
+.foot a{display:block;color:var(--muted);text-decoration:none;margin:4px 0}
+.foot p{margin:4px 0}
+.copy{grid-column:1/-1;text-align:center;font-size:.8rem}
+.social{display:flex;gap:10px}
+.social a{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:.72rem;margin:0;color:var(--rose)}
+.tabbar{display:none}
+@media(max-width:800px){
+  .menu{display:none}
+  .nav{padding:12px 5vw}
+  .mini-search{width:120px}
+  .cols{grid-template-columns:1fr}
+  .foot{grid-template-columns:1fr 1fr}
+  .tabbar{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fffaf7f5;border-top:1px solid var(--line);justify-content:space-around;padding:8px 0 10px;z-index:6}
+  .tabbar a{display:grid;justify-items:center;font-size:.7rem;color:var(--muted);text-decoration:none;position:relative}
+  .tabbar a.active{color:var(--rose)}
+  .tabbar b{top:-4px;right:-4px}
+}
+.nav{background:rgba(48,3,7,.88);border-bottom:1px solid var(--line)}
+.logo{color:#fff4ee;font-style:italic}
+.menu a{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase}
+.menu a.active{color:var(--rose)}
+.mini-search{background:rgba(255,255,255,.07);color:var(--ink);border:1px solid var(--line)}
+.tabbar{background:rgba(44,2,6,.97)}
+.foot{background:#2c0206;margin-top:0}
+.social a{position:relative}

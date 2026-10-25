@@ -58,7 +58,7 @@ export function Find() {
       <div className="box quiz">
         <div className="progress"><i style={{ width: `${((step + 1) / questions.length) * 100}%` }} /></div>
         <p className="muted small">Pertanyaan {step + 1} dari {questions.length}</p>
-        <h3 aria-level="2">{question.title}</h3>
+        <h2>{question.title}</h2>
         <div className="opts">
           {question.options.map((option) => (
             <button key={option.value} className={String(answers[question.key]) === String(option.value) ? 'on' : ''} onClick={() => setAnswers({ ...answers, [question.key]: option.value })}>{option.label}</button>

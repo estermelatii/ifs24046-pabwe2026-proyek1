@@ -61,17 +61,17 @@ export function Shop() {
       <p className="muted">Temukan buket mini yang sesuai dengan momenmu.{getParam('q') && ` Hasil untuk “${getParam('q')}”.`}</p>
       <div className="shop">
         <aside className="filters">
-          <h4 aria-level="2">Harga</h4>
+          <h2 className="sub-heading">Harga</h2>
           {PRICE_RANGES.map((range) => (
             <FilterCheckbox key={range.label} checked={getParam('min') === String(range.min)} onChange={() => togglePriceRange(range)}>{range.label}</FilterCheckbox>
           ))}
-          <h4 aria-level="2">Warna</h4>
+          <h2 className="sub-heading">Warna</h2>
           <ColorSwatches colors={FLOWER_COLORS} selectedName={getParam('color')} onSelect={(color) => toggleFilter('color', color.name)} />
-          <h4 aria-level="2">Gaya</h4>
+          <h2 className="sub-heading">Gaya</h2>
           {BOUQUET_STYLES.map((style) => (
             <FilterCheckbox key={style} checked={getParam('style') === style} onChange={() => toggleFilter('style', style)}>{style}</FilterCheckbox>
           ))}
-          <h4 aria-level="2">Momen</h4>
+          <h2 className="sub-heading">Momen</h2>
           {categories?.map((category) => (
             <FilterCheckbox key={category.id} checked={getParam('moment') === String(category.id)} onChange={() => toggleFilter('moment', category.id)}>{category.name}</FilterCheckbox>
           ))}

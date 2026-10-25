@@ -13,20 +13,30 @@ const app = (
   </Routes>
 );
 const withCart = { cart: { items: [cartItem()] } };
+// Tanggal pengiriman harus berada dalam rentang yang diizinkan form (hari ini sampai 1 tahun ke depan).
+const deliveryDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 const fill = (label, value) => fireEvent.change(screen.getByLabelText(label), { target: { value } });
 
 async function toStep2() {
-  fill("Nama lengkap", "Ani"); fill("Nomor telepon", "0812"); fill("Email", "ani@mail.com");
+  fill("Nama lengkap", "Ani"); fill("Nomor telepon", "081234567890"); fill("Email", "ani@mail.com");
   await userEvent.click(screen.getByRole("button", { name: "Lanjut ke Pengiriman" }));
 }
 async function toStep3() {
-  fill("Alamat lengkap", "Jl. Mawar 1"); fill("Kota", "Balige"); fill("Tanggal pengiriman", "2030-12-01");
+  fill("Alamat lengkap", "Jl. Mawar 1"); fill("Kota", "Balige"); fill("Tanggal pengiriman", deliveryDate);
   await userEvent.click(screen.getByLabelText(/GoSend Instant/));
   fill("Pesan kartu ucapan (opsional)", "Selamat ulang tahun");
   await userEvent.click(screen.getByRole("button", { name: "Lanjut ke Pembayaran" }));
 }
 
 describe("Checkout", () => {
+  it("menolak nomor telepon yang formatnya salah", async () => {
+    renderWithProviders(app, { route: "/checkout", preloadedState: { ...withCart, ...userState } });
+    fill("Nomor telepon", "123");
+    await userEvent.click(screen.getByRole("button", { name: "Lanjut ke Pengiriman" }));
+    expect(screen.getByLabelText("Nomor telepon")).toBeInvalid();
+    expect(screen.getByRole("heading", { name: "Informasi Pelanggan" })).toBeInTheDocument();
+  });
+
   it("menampilkan pesan bila keranjang kosong", () => {
     renderWithProviders(app, { route: "/checkout" });
     expect(screen.getByText(/Keranjang kosong/)).toBeInTheDocument();

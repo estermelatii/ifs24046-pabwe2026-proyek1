@@ -65,10 +65,21 @@ describe("App", () => {
     expect(screen.queryByPlaceholderText("Cari buket")).toBeNull();
   });
 
+  it("pencarian kosong tidak membuka halaman Shop", async () => {
+    mockFetch(routes());
+    renderWithProviders(<App />);
+    await userEvent.click(screen.getByRole("button", { name: "Cari" }));
+    fireEvent.change(screen.getByPlaceholderText("Cari buket"), { target: { value: "   " } });
+    fireEvent.submit(screen.getByPlaceholderText("Cari buket").closest("form"));
+    expect(screen.getByPlaceholderText("Cari buket")).toBeInTheDocument();
+    expect(screen.queryByText("Shop Our Bouquets")).toBeNull();
+    await screen.findByText("Buket 1");
+  });
+
   it.each([
     ["/toko", "Shop Our Bouquets"], ["/find", "Find Your Bloom"], ["/keranjang", "Keranjang Belanja"],
     ["/checkout", "Keranjang kosong."], ["/akun", "Masuk"], ["/about", "About FloraGift"], ["/kontak", "Hubungi Kami"],
-    ["/lacak", "Lacak Pesanan"], ["/riwayat", "Riwayat Pesanan"], ["/sukses/FG1", "Pesanan Berhasil!"], ["/produk/1", "Buket 1"],
+    ["/lacak", "Lacak Pesanan"], ["/tidak-ada", "Halaman tidak ditemukan"], ["/riwayat", "Riwayat Pesanan"], ["/sukses/FG1", "Pesanan Berhasil!"], ["/produk/1", "Buket 1"],
   ])("merender rute %s", async (route, text) => {
     mockFetch(routes());
     renderWithProviders(<App />, { route });

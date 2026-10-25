@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { selectCount } from '../../features/cart/cartSlice.js';
 import { selectUser } from '../../features/auth/authSlice.js';
+import { LIMITS } from '../../helpers/validation.js';
 import { Icon } from '../Icon.jsx';
 
 const MENU_LINKS = [
@@ -22,7 +23,9 @@ export function Header() {
 
   const handleSearch = (event) => {
     event.preventDefault();
-    navigate('/toko?q=' + encodeURIComponent(searchQuery));
+    const query = searchQuery.trim();
+    if (!query) return;
+    navigate('/toko?q=' + encodeURIComponent(query));
     setIsSearchOpen(false);
   };
 
@@ -33,7 +36,7 @@ export function Header() {
       <div className="icons">
         {isSearchOpen && (
           <form onSubmit={handleSearch}>
-            <input autoFocus className="mini-search" placeholder="Cari buket" value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} />
+            <input autoFocus className="mini-search" placeholder="Cari buket" maxLength={LIMITS.search.max} value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} />
           </form>
         )}
         <button aria-label="Cari" onClick={() => setIsSearchOpen(!isSearchOpen)}><Icon name="search" /></button>
