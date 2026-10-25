@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { rupiah } from '../../helpers/format.js';
@@ -102,3 +103,23 @@ export function Product() {
     </section>
   );
 }
+ProductDetail.propTypes = {
+  product: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    name: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    stock: PropTypes.number,
+    rating: PropTypes.number,
+    reviews_count: PropTypes.number,
+    description: PropTypes.string,
+    moment: PropTypes.string,
+    style: PropTypes.string,
+    photos: PropTypes.number,
+    colors: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      hex: PropTypes.string.isRequired,
+    })).isRequired,
+  }).isRequired,
+  reviews: PropTypes.array,
+};
+

@@ -1,4 +1,5 @@
-import { Component } from 'react';
+import { Component } from "react";
+import PropTypes from "prop-types";
 
 // Menangkap error render (termasuk gagal memuat halaman lazy) agar aplikasi tidak blank.
 export class ErrorBoundary extends Component {
@@ -9,7 +10,7 @@ export class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error) {
-    console.error('Terjadi error pada tampilan:', error);
+    console.error("Terjadi error pada tampilan:", error);
   }
 
   render() {
@@ -23,3 +24,7 @@ export class ErrorBoundary extends Component {
     );
   }
 }
+
+ErrorBoundary.propTypes = {
+  children: PropTypes.node,
+};

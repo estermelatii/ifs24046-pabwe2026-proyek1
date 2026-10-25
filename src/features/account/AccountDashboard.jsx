@@ -1,31 +1,48 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { rupiah, getFirstName, capitalize } from '../../helpers/format.js';
-import { STATUS_COMPLETED } from '../../helpers/constants.js';
-import useFetch from '../../hooks/useFetch.js';
-import { fetchPopularProducts } from '../../services/productService.js';
-import { fetchMyOrders } from '../../services/orderService.js';
-import { Status } from '../../components/Status.jsx';
-import { ProductCard } from '../../components/ProductCard.jsx';
-import { logout } from '../auth/authSlice.js';
+import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { rupiah, getFirstName, capitalize } from "../../helpers/format.js";
+import { STATUS_COMPLETED } from "../../helpers/constants.js";
+import useFetch from "../../hooks/useFetch.js";
+import { fetchPopularProducts } from "../../services/productService.js";
+import { fetchMyOrders } from "../../services/orderService.js";
+import { Status } from "../../components/Status.jsx";
+import { ProductCard } from "../../components/ProductCard.jsx";
+import { logout } from "../auth/authSlice.js";
 
-const describeItems = (order) => order.items.map((item) => `${item.name} ×${item.quantity}`).join(', ');
+const describeItems = (order) => order.items.map((item) => `${item.name} ×${item.quantity}`).join(", ");
 
 function WelcomeOverlay({ mode, name, onDismiss }) {
-  const isRegister = mode === 'register';
+  const isRegister = mode === "register";
   return (
-    <div className="welcome" onClick={onDismiss}>
+    <div
+      className="welcome"
+      role="dialog"
+      aria-modal="true"
+      aria-label={isRegister ? "Akun berhasil dibuat" : "Berhasil masuk"}
+      tabIndex={0}
+      onClick={onDismiss}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " " || event.key === "Escape") onDismiss();
+      }}
+    >
       <div>
-        <span className="eyebrow">{isRegister ? 'Akun berhasil dibuat' : 'Berhasil masuk'}</span>
-        <h1>{isRegister ? 'Selamat datang,' : 'Selamat datang kembali,'}<br /><em>{name}</em></h1>
+        <span className="eyebrow">{isRegister ? "Akun berhasil dibuat" : "Berhasil masuk"}</span>
+        <h1>{isRegister ? "Selamat datang," : "Selamat datang kembali,"}<br /><em>{name}</em></h1>
         <i className="wline" />
-        <p>{isRegister ? 'Akunmu sudah siap. Temukan buket pertamamu dan rayakan momen spesialmu.' : 'Senang melihatmu lagi. Buket cantik berikutnya sudah menunggu.'}</p>
+        <p>{isRegister ? "Akunmu sudah siap. Temukan buket pertamamu dan rayakan momen spesialmu." : "Senang melihatmu lagi. Buket cantik berikutnya sudah menunggu."}</p>
         <Link to="/toko" className="btn lg">Mulai Jelajahi</Link>
       </div>
     </div>
   );
 }
+
+WelcomeOverlay.propTypes = {
+  mode: PropTypes.string,
+  name: PropTypes.string.isRequired,
+  onDismiss: PropTypes.func.isRequired,
+};
 
 export function AccountDashboard({ user, welcomeMode, onDismissWelcome }) {
   const dispatch = useDispatch();
@@ -61,9 +78,9 @@ export function AccountDashboard({ user, welcomeMode, onDismissWelcome }) {
       </section>
       <section className="wrap">
         <div className="stats">
-          <div><b>{orders ? orders.length : '–'}</b><span>Total pesanan</span></div>
-          <div><b>{orders ? activeOrderCount : '–'}</b><span>Pesanan berjalan</span></div>
-          <div><b>{orders ? rupiah(totalSpent) : '–'}</b><span>Total belanja</span></div>
+          <div><b>{orders ? orders.length : "–"}</b><span>Total pesanan</span></div>
+          <div><b>{orders ? activeOrderCount : "–"}</b><span>Pesanan berjalan</span></div>
+          <div><b>{orders ? rupiah(totalSpent) : "–"}</b><span>Total belanja</span></div>
         </div>
         <h2>Pesanan Terakhir</h2>
         {latestOrder ? (
@@ -73,7 +90,7 @@ export function AccountDashboard({ user, welcomeMode, onDismissWelcome }) {
             <p className="between"><span className="muted small">{latestOrder.created_at}</span><b>{rupiah(latestOrder.total)}</b></p>
             <Link className="btn ghost sm" to={`/lacak/${latestOrder.code}`}>Lacak Pesanan</Link>
           </div>
-        ) : <p className="notice">{orders ? 'Kamu belum punya pesanan. Yuk pilih buket pertamamu.' : 'Memuat…'}</p>}
+        ) : <p className="notice">{orders ? "Kamu belum punya pesanan. Yuk pilih buket pertamamu." : "Memuat…"}</p>}
         <div className="between" style={{ marginTop: 40 }}><h2>Pilihan Untukmu</h2><Link to="/toko">Lihat semua →</Link></div>
         <Status data={popularProducts} error="">
           {popularProducts && <div className="grid">{popularProducts.items.map((product) => <ProductCard key={product.id} product={product} />)}</div>}
@@ -82,3 +99,12 @@ export function AccountDashboard({ user, welcomeMode, onDismissWelcome }) {
     </>
   );
 }
+
+AccountDashboard.propTypes = {
+  user: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+  }).isRequired,
+  welcomeMode: PropTypes.string,
+  onDismissWelcome: PropTypes.func,
+};

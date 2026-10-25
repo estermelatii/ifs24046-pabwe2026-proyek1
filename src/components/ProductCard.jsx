@@ -1,6 +1,7 @@
-import { Link } from 'react-router-dom';
-import { rupiah } from '../helpers/format.js';
-import { Pic } from './Pic.jsx';
+import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+import { rupiah } from "../helpers/format.js";
+import { Pic } from "./Pic.jsx";
 
 export function ProductCard({ product }) {
   return (
@@ -12,3 +13,17 @@ export function ProductCard({ product }) {
     </Link>
   );
 }
+
+ProductCard.propTypes = {
+  product: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    name: PropTypes.string.isRequired,
+    moment: PropTypes.string,
+    style: PropTypes.string,
+    price: PropTypes.number.isRequired,
+    colors: PropTypes.arrayOf(PropTypes.shape({
+      hex: PropTypes.string.isRequired,
+      name: PropTypes.string,
+    })).isRequired,
+  }).isRequired,
+};

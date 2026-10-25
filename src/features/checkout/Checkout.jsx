@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { rupiah } from '../../helpers/format.js';
@@ -153,3 +154,34 @@ export function Checkout() {
     </section>
   );
 }
+CustomerStep.propTypes = {
+  form: PropTypes.shape({
+    customer_name: PropTypes.string,
+    phone: PropTypes.string,
+    email: PropTypes.string,
+  }).isRequired,
+  onInput: PropTypes.func.isRequired,
+};
+
+ShippingStep.propTypes = {
+  form: PropTypes.shape({
+    address: PropTypes.string,
+    city: PropTypes.string,
+    courier: PropTypes.string,
+    delivery_date: PropTypes.string,
+    card_message: PropTypes.string,
+  }).isRequired,
+  onInput: PropTypes.func.isRequired,
+  onSelect: PropTypes.func.isRequired,
+};
+
+PaymentStep.propTypes = {
+  form: PropTypes.shape({
+    payment_method: PropTypes.string,
+    address: PropTypes.string,
+    city: PropTypes.string,
+    delivery_date: PropTypes.string,
+  }).isRequired,
+  onSelect: PropTypes.func.isRequired,
+};
+

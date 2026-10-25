@@ -38,8 +38,8 @@ export default function App() {
   // Server menolak token (kedaluwarsa/dicabut): keluarkan pengguna.
   useEffect(() => {
     const handleAuthExpired = () => dispatch(logout());
-    window.addEventListener(AUTH_EXPIRED_EVENT, handleAuthExpired);
-    return () => window.removeEventListener(AUTH_EXPIRED_EVENT, handleAuthExpired);
+    globalThis.addEventListener(AUTH_EXPIRED_EVENT, handleAuthExpired);
+    return () => globalThis.removeEventListener(AUTH_EXPIRED_EVENT, handleAuthExpired);
   }, [dispatch]);
 
   return (
@@ -73,3 +73,5 @@ export default function App() {
     </>
   );
 }
+
+

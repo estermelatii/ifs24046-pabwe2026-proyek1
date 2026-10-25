@@ -1,6 +1,7 @@
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { selectUser } from '../features/auth/authSlice.js';
+import PropTypes from "prop-types";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { selectUser } from "../features/auth/authSlice.js";
 
 // Guard rute: hanya merender halaman bila pengguna sudah masuk.
 export function RequireAuth({ title, purpose, children }) {
@@ -13,3 +14,9 @@ export function RequireAuth({ title, purpose, children }) {
     </section>
   );
 }
+
+RequireAuth.propTypes = {
+  title: PropTypes.string.isRequired,
+  purpose: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
+};

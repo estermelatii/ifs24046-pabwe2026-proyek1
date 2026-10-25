@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 export function ColorSwatches({ colors, selectedName, onSelect }) {
   return (
     <div className="swatches">
@@ -7,7 +9,7 @@ export function ColorSwatches({ colors, selectedName, onSelect }) {
           title={color.name}
           aria-label={color.name}
           aria-pressed={selectedName === color.name}
-          className={selectedName === color.name ? 'on' : ''}
+          className={selectedName === color.name ? "on" : ""}
           style={{ background: color.hex }}
           onClick={() => onSelect(color, index)}
         />
@@ -15,3 +17,12 @@ export function ColorSwatches({ colors, selectedName, onSelect }) {
     </div>
   );
 }
+
+ColorSwatches.propTypes = {
+  colors: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    hex: PropTypes.string.isRequired,
+  })).isRequired,
+  selectedName: PropTypes.string,
+  onSelect: PropTypes.func.isRequired,
+};

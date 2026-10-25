@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { useSearchParams } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch.js';
 import { fetchCategories, fetchProducts } from '../../services/productService.js';
@@ -16,6 +17,12 @@ const PRICE_RANGES = [
 function FilterCheckbox({ checked, onChange, children }) {
   return <label className="chk"><input type="checkbox" checked={checked} onChange={onChange} />{children}</label>;
 }
+
+FilterCheckbox.propTypes = {
+  checked: PropTypes.bool.isRequired,
+  onChange: PropTypes.func.isRequired,
+  children: PropTypes.node,
+};
 
 export function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -99,3 +106,4 @@ export function Shop() {
     </section>
   );
 }
+

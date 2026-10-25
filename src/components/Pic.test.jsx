@@ -10,11 +10,11 @@ describe("Pic", () => {
     expect(container.firstChild).toHaveClass("big", "photo");
     fireEvent.error(img);
     expect(container.querySelector("img")).toBeNull();
-    expect(screen.getByRole("img", { name: /Ilustrasi buket/ })).toBeInTheDocument();
+    expect(screen.getByLabelText(/Ilustrasi buket/)).toBeInTheDocument();
   });
 
   it("tanpa src memakai ilustrasi", () => {
     render(<Pic hex="#fff" seed={2} />);
-    expect(screen.getByRole("img", { name: /Ilustrasi buket/ })).toBeInTheDocument();
+    expect(screen.getByLabelText(/Ilustrasi buket/)).toBeInTheDocument();
   });
 });

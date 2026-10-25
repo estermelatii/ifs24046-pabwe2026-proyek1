@@ -35,8 +35,8 @@ describe("App", () => {
     localStorage.setItem("fg-token", "t");
     mockFetch(routes());
     renderWithProviders(<App />);
-    await screen.findByText("Buket 1");
-    await screen.findByText("B", { selector: ".avatar" });
+    expect(await screen.findByText("Buket 1")).toBeInTheDocument();
+    expect(await screen.findByText("B", { selector: ".avatar" })).toBeInTheDocument();
   });
 
   it("mengeluarkan pengguna saat sesi dinyatakan berakhir", async () => {
@@ -44,7 +44,7 @@ describe("App", () => {
     mockFetch(routes());
     renderWithProviders(<App />);
     await screen.findByText("B", { selector: ".avatar" });
-    act(() => { window.dispatchEvent(new Event("auth:expired")); });
+    act(() => { globalThis.dispatchEvent(new Event("auth:expired")); });
     expect(document.querySelector(".avatar")).toBeNull();
     expect(localStorage.getItem("fg-token")).toBeNull();
   });
@@ -86,3 +86,5 @@ describe("App", () => {
     expect((await screen.findAllByText(text, { exact: false })).length).toBeGreaterThan(0);
   });
 });
+
+

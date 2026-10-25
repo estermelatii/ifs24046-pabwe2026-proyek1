@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 const ICON_PATHS = {
   search: <><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></>,
   user: <><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 4-6 8-6s8 2 8 6" /></>,
@@ -16,3 +18,7 @@ export const Icon = ({ name }) => (
     {ICON_PATHS[name]}
   </svg>
 );
+
+Icon.propTypes = {
+  name: PropTypes.string.isRequired,
+};

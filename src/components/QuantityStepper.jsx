@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 // Tombol tambah/kurang jumlah. Tombol dinonaktifkan di batas min/max (mis. stok habis).
 export function QuantityStepper({ value, min, max, onChange }) {
   return (
@@ -8,3 +10,10 @@ export function QuantityStepper({ value, min, max, onChange }) {
     </div>
   );
 }
+
+QuantityStepper.propTypes = {
+  value: PropTypes.number.isRequired,
+  min: PropTypes.number.isRequired,
+  max: PropTypes.number.isRequired,
+  onChange: PropTypes.func.isRequired,
+};

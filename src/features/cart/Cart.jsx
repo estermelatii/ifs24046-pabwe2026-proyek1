@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { rupiah } from '../../helpers/format.js';
@@ -25,6 +26,21 @@ function CartRow({ item, onQuantityChange, onRemove }) {
     </tr>
   );
 }
+
+CartRow.propTypes = {
+  item: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    name: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    qty: PropTypes.number.isRequired,
+    color: PropTypes.shape({
+      hex: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+    }).isRequired,
+  }).isRequired,
+  onQuantityChange: PropTypes.func.isRequired,
+  onRemove: PropTypes.func.isRequired,
+};
 
 export function Cart() {
   const dispatch = useDispatch();
@@ -69,3 +85,4 @@ export function Cart() {
     </section>
   );
 }
+
