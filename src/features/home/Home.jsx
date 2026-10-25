@@ -74,7 +74,7 @@ function Collections() {
       <div className="coll">
         {COLLECTIONS.map(({ name, tagline, link, photoId }) => (
           <Link key={name} to={link} className="coll-card">
-            <img src={`/foto/${photoId}-1.jpg`} alt="" loading="lazy" />
+            <img src={`/foto/${photoId}-1.jpg`} alt="Buket bunga" loading="lazy" />
             <div><small>Collection</small><h3>{name}</h3><span>{tagline}</span></div>
           </Link>
         ))}
@@ -101,7 +101,7 @@ function ShopByMoment({ categories }) {
       <div className="mm-grid">
         {categories?.map((category, index) => (
           <Link key={category.id} to={`/toko?moment=${category.id}`} className="mm">
-            <img src={`/foto/${MOMENT_PHOTO_IDS[category.name]}-1.jpg`} alt="" loading="lazy" />
+            <img src={`/foto/${MOMENT_PHOTO_IDS[category.name]}-1.jpg`} alt="Buket bunga" loading="lazy" />
             <div><small>{String(index + 1).padStart(2, '0')}</small><h3>{category.name}</h3><span>Lihat koleksi →</span></div>
           </Link>
         ))}
