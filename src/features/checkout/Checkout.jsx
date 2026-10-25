@@ -14,7 +14,7 @@ export function Checkout() {
   const [step, setStep] = useState(1), [busy, setBusy] = useState(false), [error, setError] = useState('');
   const [f, setF] = useState({ customer_name: user?.name || '', phone: '', email: user?.email || '', address: '', city: '', courier: 'JNE', delivery_date: '', card_message: '', payment_method: 'Transfer Bank' });
   const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
-  if (!items.length) return <section className="wrap"><p className="notice">Keranjang kosong. <Link to="/toko">Pilih buket</Link></p></section>;
+  if (!items.length) return <section className="wrap"><h1 className="page-title">Checkout</h1><p className="notice">Keranjang kosong. <Link to="/toko">Pilih buket</Link></p></section>;
   const ship = COUR.find((c) => c[0] === f.courier)[2];
   const submit = async (e) => {
     e.preventDefault();
