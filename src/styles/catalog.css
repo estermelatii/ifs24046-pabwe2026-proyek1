@@ -23,12 +23,8 @@
 .quiz h2{font-size:1.7rem;margin:6px 0 16px}
 .progress{height:5px;background:var(--line);border-radius:9px;overflow:hidden;margin-bottom:10px}
 .progress i{display:block;height:100%;background:var(--rose);transition:width .3s}
-.opts{display:grid;gap:12px;margin-bottom:22px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
-.opts button{cursor:pointer;display:flex;gap:10px;align-items:center;color:var(--ink);position:relative;justify-content:flex-start;text-align:left;padding:18px 20px 18px 54px;font:500 1.1rem 'Playfair Display',Georgia,serif;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.04);transition:border-color .2s,background .2s}
-.opts button::before{content:'';position:absolute;left:20px;top:50%;width:16px;height:16px;margin-top:-8px;border-radius:50%;border:1px solid var(--rose)}
-.opts button:hover{border-color:var(--rose)}
-.opts button.on{border-color:var(--rose);background:rgba(241,195,184,.1)}
-.opts button.on::before{background:var(--rose);box-shadow:inset 0 0 0 3px #4f0b11}
+.opts{display:grid;gap:12px;margin-bottom:22px}
+.opts button{cursor:pointer;display:flex;gap:10px;align-items:center}
 @media(max-width:800px){
   .detail,.shop{grid-template-columns:1fr}
   .gallery{grid-template-columns:1fr}
@@ -36,3 +32,10 @@
   .filters{display:grid;grid-template-columns:1fr 1fr;gap:0 20px}
   .filters .sub-heading{grid-column:auto}
 }
+.opts button{color:var(--ink)}
+.opts{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.opts button{position:relative;justify-content:flex-start;text-align:left;padding:18px 20px 18px 54px;font:500 1.1rem 'Playfair Display',serif;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.04);transition:border-color .2s,background .2s}
+.opts button::before{content:'';position:absolute;left:20px;top:50%;width:16px;height:16px;margin-top:-8px;border-radius:50%;border:1px solid var(--rose)}
+.opts button:hover{border-color:var(--rose)}
+.opts button.on{border-color:var(--rose);background:rgba(241,195,184,.1)}
+.opts button.on::before{background:var(--rose);box-shadow:inset 0 0 0 3px #4f0b11}
