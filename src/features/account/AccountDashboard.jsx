@@ -16,7 +16,7 @@ const describeItems = (order) => order.items.map((item) => `${item.name} ×${ite
 function WelcomeOverlay({ mode, name, onDismiss }) {
   const isRegister = mode === "register";
   return (
-    <dialog className="welcome" open aria-label={isRegister ? "Akun berhasil dibuat" : "Berhasil masuk"} onClick={onDismiss} onCancel={(event) => { event.preventDefault(); onDismiss(); }}>
+    <dialog className="welcome" open aria-label={isRegister ? "Akun berhasil dibuat" : "Berhasil masuk"} onClick={onDismiss}>
       <div onClick={(event) => event.stopPropagation()}>
         <span className="eyebrow">{isRegister ? "Akun berhasil dibuat" : "Berhasil masuk"}</span>
         <h1>{isRegister ? "Selamat datang," : "Selamat datang kembali,"}<br /><em>{name}</em></h1>
@@ -99,5 +99,6 @@ AccountDashboard.propTypes = {
   welcomeMode: PropTypes.string,
   onDismissWelcome: PropTypes.func,
 };
+
 
 

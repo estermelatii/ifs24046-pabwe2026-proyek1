@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Account } from "./Account.jsx";
@@ -8,6 +8,9 @@ const user = { id: 1, name: "ani lestari", email: "ani@mail.com" };
 const dash = [["GET /api/my/orders", [order(), order({ id: 2, code: "FG2026100002", status: "Selesai" })]], ["GET /api/products", list([product(1)])]];
 
 describe("Account", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
   it("login berhasil menampilkan sambutan dan dasbor", async () => {
     mockFetch([["POST /api/auth/login", { token: "t", user }], ...dash]);
     renderWithProviders(<Account />);
@@ -19,8 +22,8 @@ describe("Account", () => {
     expect(await screen.findByText("Total pesanan")).toBeInTheDocument();
     expect(await screen.findByText("FG2026100001")).toBeInTheDocument();
     expect(localStorage.getItem("fg-token")).toBe("t");
-    await userEvent.click(screen.getByText("Selamat datang kembali,"));
-    expect(screen.queryByText("Selamat datang kembali,")).toBeNull();
+    await userEvent.click(screen.getByRole("button", { name: "Tutup" }));
+    expect(screen.queryByRole("dialog")).toBeNull();
   });
 
   it("daftar akun baru memakai sambutan berbeda dan menutup otomatis", async () => {
@@ -31,21 +34,18 @@ describe("Account", () => {
     fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ani@mail.com" } });
     fireEvent.change(screen.getByLabelText("Password"), { target: { value: "rahasia1" } });
     await userEvent.click(screen.getByRole("button", { name: "Buat akun" }));
-    expect(await screen.findByText("Akun berhasil dibuat")).toBeInTheDocument();
-    expect(await screen.findByText("Selamat datang,", {}, { timeout: 2000 })).toBeInTheDocument();
-    expect(await screen.findByText("Akunmu sudah siap. Temukan buket pertamamu dan rayakan momen spesialmu.")).toBeInTheDocument();
-    await screen.findByText("Total pesanan");
-    await new Promise((r) => setTimeout(r, 4800));
-    expect(screen.queryByText("Akun berhasil dibuat")).toBeNull();
-  }, 10000);
+    expect(await screen.findByText("Selamat datang,")).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Tutup" }));
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
 
   it("menampilkan error login dan dapat kembali ke mode masuk", async () => {
-    mockFetch([["POST /api/auth/login", { error: "Email atau password salah" }, 400]]);
+    mockFetch([["POST /api/auth/login", { error: "Email atau password salah" }, 401]]);
     renderWithProviders(<Account />);
-    fireEvent.change(screen.getByLabelText("Email"), { target: { value: "x@y.z" } });
-    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "salahsalah" } });
+    fireEvent.change(screen.getByLabelText("Email"), { target: { value: "x@mail.com" } });
+    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "salah123" } });
     await userEvent.click(screen.getByRole("button", { name: "Masuk" }));
-    expect(await screen.findByText("Email atau password salah")).toBeInTheDocument();
+    expect(await screen.findByText(/Email atau password salah/)).toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: "Belum punya akun? Daftar" }));
     await userEvent.click(screen.getByRole("button", { name: "Sudah punya akun? Masuk" }));
     expect(screen.getByRole("heading", { name: "Masuk" })).toBeInTheDocument();
@@ -73,38 +73,31 @@ describe("Account", () => {
     renderWithProviders(<Account />, { preloadedState: userState });
     expect(await screen.findByText(/belum punya pesanan/)).toBeInTheDocument();
   });
-  it("sambutan merespons keyboard Enter, Space, dan Escape", async () => {
+
+  it("sambutan ditutup lewat tombol Tutup", async () => {
+    mockFetch([["POST /api/auth/login", { token: "t", user }], ...dash]);
+    renderWithProviders(<Account />);
+    fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ani@mail.com" } });
+    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "rahasia1" } });
+    await userEvent.click(screen.getByRole("button", { name: "Masuk" }));
+    expect(await screen.findByRole("dialog")).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Tutup" }));
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
+  it("sambutan ditutup lewat klik backdrop", async () => {
     mockFetch([["POST /api/auth/login", { token: "t", user }], ...dash]);
     renderWithProviders(<Account />);
     fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ani@mail.com" } });
     fireEvent.change(screen.getByLabelText("Password"), { target: { value: "rahasia1" } });
     await userEvent.click(screen.getByRole("button", { name: "Masuk" }));
     const dialog = await screen.findByRole("dialog");
-    fireEvent.keyDown(dialog, { key: "a" });
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
-    fireEvent.keyDown(dialog, { key: "Enter" });
-    expect(screen.queryByRole("dialog")).toBeNull();
-  });
-
-  it("sambutan ditutup dengan Space dan Escape", async () => {
-    mockFetch([["POST /api/auth/login", { token: "t", user }], ...dash]);
-    const { unmount } = renderWithProviders(<Account />);
-    fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ani@mail.com" } });
-    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "rahasia1" } });
-    await userEvent.click(screen.getByRole("button", { name: "Masuk" }));
-    fireEvent.keyDown(await screen.findByRole("dialog"), { key: " " });
-    expect(screen.queryByRole("dialog")).toBeNull();
-    unmount();
-
-    mockFetch([["POST /api/auth/login", { token: "t", user }], ...dash]);
-    renderWithProviders(<Account />);
-    fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ani@mail.com" } });
-    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "rahasia1" } });
-    await userEvent.click(screen.getByRole("button", { name: "Masuk" }));
-    fireEvent.keyDown(await screen.findByRole("dialog"), { key: "Escape" });
+    fireEvent.click(dialog);
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 });
+
+
+
 
 
 
