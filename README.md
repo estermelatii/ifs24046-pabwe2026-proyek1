@@ -6,13 +6,18 @@ Aplikasi pemesanan bucket bunga custom online. Repository ini berisi **front-end
 ## Struktur
 ```
 src/
-  features/    # cart, auth (Redux slice), home, catalog, quiz, checkout, orders, account, static
-  components/  # komponen bersama (ui, Bouquet)
-  helpers/     # api.js, constants.js
-  hooks/       # useFetch.js
-  store.js     # Redux store
-public/foto/   # foto produk (<id>-1.jpg)
+  config.js      # satu-satunya tempat membaca env (VITE_API_URL) + konstanta global
+  services/      # lapisan akses API: apiClient, authService, productService, orderService
+  features/      # cart, auth (Redux slice), home, catalog, quiz, checkout, orders, account, static
+  components/    # komponen bersama (ui, Icon, Bouquet, QuantityStepper, ColorSwatches) + layout/ (Header, Footer, TabBar)
+  helpers/       # format.js (rupiah, nama), constants.js (konstanta domain)
+  hooks/         # useFetch.js
+  store.js       # Redux store
+public/foto/     # foto produk (<id>-1.jpg)
 ```
+
+Alur data: komponen -> `services/*` -> `services/apiClient.js` -> back-end. Komponen tidak
+memanggil `fetch`/`api` secara langsung.
 
 ## Menjalankan di lokal
 ```bash
@@ -30,4 +35,5 @@ npm test                  # vitest run
 npm run test:coverage     # coverage 100% (lcov untuk SonarQube)
 ```
 CI/CD memakai `Jenkinsfile` (install, test, Trivy, SonarQube, quality gate, package, deploy).
-Alamat back-end bawaan saat build ada di `vite.config.js` (`API_BASEURL`), dapat diganti dengan `VITE_API_URL`.
+Alamat back-end dibaca dari `VITE_API_URL` (lihat `src/config.js`); bila kosong dipakai `http://localhost:3000`.
+Di Vercel, isi `VITE_API_URL` pada Environment Variables lalu redeploy.

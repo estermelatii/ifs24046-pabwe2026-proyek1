@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { Status, Stars, Pic, Card } from "./ui.jsx";
-import { Ic } from "./Bouquet.jsx";
+import { Icon } from "./Icon.jsx";
 import { product } from "../test-utils.jsx";
 
 describe("components/ui", () => {
@@ -16,7 +16,7 @@ describe("components/ui", () => {
   });
 
   it("Stars membulatkan rating", () => {
-    render(<Stars v={4.6} />);
+    render(<Stars rating={4.6} />);
     expect(screen.getByLabelText("Rating 4.6")).toHaveTextContent("★★★★★");
   });
 
@@ -36,13 +36,13 @@ describe("components/ui", () => {
   });
 
   it("Card menaut ke detail produk", () => {
-    render(<MemoryRouter><Card p={product(7)} /></MemoryRouter>);
+    render(<MemoryRouter><Card product={product(7)} /></MemoryRouter>);
     expect(screen.getByRole("link")).toHaveAttribute("href", "/produk/7");
     expect(screen.getByText("Rp 100.000")).toBeInTheDocument();
   });
 
-  it("Ic merender ikon", () => {
-    const { container } = render(<Ic n="bag" />);
+  it("Icon merender ikon", () => {
+    const { container } = render(<Icon name="bag" />);
     expect(container.querySelector("svg")).toBeInTheDocument();
   });
 });

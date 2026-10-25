@@ -1,53 +1,105 @@
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { rupiah } from '../../helpers/api.js';
+import { rupiah } from '../../helpers/format.js';
 import useFetch from '../../hooks/useFetch.js';
+import { fetchProduct, fetchProductReviews } from '../../services/productService.js';
 import { Status, Stars, Pic } from '../../components/ui.jsx';
-import { Ic } from '../../components/Bouquet.jsx';
-import { addItem } from '../../features/cart/cartSlice.js';
+import { Icon } from '../../components/Icon.jsx';
+import { ColorSwatches } from '../../components/ColorSwatches.jsx';
+import { QuantityStepper } from '../../components/QuantityStepper.jsx';
+import { addItem } from '../cart/cartSlice.js';
+
+const PHOTO_SEED_OFFSETS = [0, 11, 23];
+const TABS = [
+  { id: 'description', label: 'Deskripsi' },
+  { id: 'info', label: 'Informasi Produk' },
+  { id: 'reviews', label: 'Ulasan' },
+];
+
+function ProductDetail({ product, reviews }) {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [quantity, setQuantity] = useState(1);
+  const [colorIndex, setColorIndex] = useState(0);
+  const [photoIndex, setPhotoIndex] = useState(0);
+  const [activeTab, setActiveTab] = useState('description');
+
+  const selectedColor = product.colors[colorIndex];
+  const photoSeeds = PHOTO_SEED_OFFSETS.slice(0, product.photos || 1).map((offset) => product.id + offset);
+  const hasMultiplePhotos = photoSeeds.length > 1;
+
+  const addToCart = () => {
+    dispatch(addItem({ product, qty: quantity, color: selectedColor }));
+    navigate('/keranjang');
+  };
+
+  return (
+    <>
+      <p className="crumb"><Link to="/">Home</Link> / <Link to="/toko">Shop</Link> / {product.name}</p>
+      <div className="detail">
+        <div className="gallery" style={hasMultiplePhotos ? undefined : { gridTemplateColumns: '1fr' }}>
+          {hasMultiplePhotos && (
+            <div className="thumbs">
+              {photoSeeds.map((seed, index) => (
+                <button key={seed} aria-label={`Foto ${index + 1}`} className={photoIndex === index ? 'on' : ''} onClick={() => setPhotoIndex(index)}>
+                  <Pic hex={selectedColor.hex} seed={seed} src={`/foto/${product.id}-${index + 1}.jpg`} />
+                </button>
+              ))}
+            </div>
+          )}
+          <Pic hex={selectedColor.hex} seed={photoSeeds[photoIndex]} src={`/foto/${product.id}-${photoIndex + 1}.jpg`} big />
+        </div>
+        <div>
+          <h1 className="page-title">{product.name}</h1>
+          <p className="price big">{rupiah(product.price)} <span className={'badge' + (product.stock < 1 ? ' out' : '')}>{product.stock > 0 ? 'Stok Tersedia' : 'Stok Habis'}</span></p>
+          <p><Stars rating={product.rating} /> <span className="muted small">{product.rating} ({product.reviews_count} ulasan)</span></p>
+          <p className="desc">{product.description}</p>
+          <p className="muted small">Pilih warna: <b>{selectedColor.name}</b></p>
+          <ColorSwatches colors={product.colors} selectedName={selectedColor.name} onSelect={(_, index) => setColorIndex(index)} />
+          <div className="row buy">
+            <QuantityStepper
+              value={quantity}
+              onDecrease={() => setQuantity(Math.max(1, quantity - 1))}
+              onIncrease={() => setQuantity(Math.min(product.stock, quantity + 1))}
+            />
+            <button className="btn" disabled={product.stock < 1} onClick={addToCart}>Tambah ke Keranjang</button>
+          </div>
+        </div>
+      </div>
+      <div className="assure">
+        <div><Icon name="truck" /><b>Pengiriman</b><span>Tersedia di seluruh Indonesia</span></div>
+        <div><Icon name="leaf" /><b>Garansi Kesegaran</b><span>Bunga segar, diganti jika layu dalam 3 hari</span></div>
+        <div><Icon name="gem" /><b>Kualitas Terjamin</b><span>Dirangkai handmade dari bunga pilihan</span></div>
+      </div>
+      <div className="tabs">
+        {TABS.map((tab) => <button key={tab.id} className={activeTab === tab.id ? 'on' : ''} onClick={() => setActiveTab(tab.id)}>{tab.label}</button>)}
+      </div>
+      {activeTab === 'description' && <p className="desc">{product.description} Setiap buket dibuat secara handmade sehingga memiliki sentuhan unik dan khusus. Tambahkan pesan kartu ucapan saat checkout.</p>}
+      {activeTab === 'info' && (
+        <dl className="info">
+          <dt>Momen</dt><dd>{product.moment}</dd>
+          <dt>Gaya</dt><dd>{product.style}</dd>
+          <dt>Warna</dt><dd>{product.colors.map((color) => color.name).join(', ')}</dd>
+          <dt>Stok</dt><dd>{product.stock}</dd>
+        </dl>
+      )}
+      {activeTab === 'reviews' && (reviews
+        ? reviews.map((review) => <div key={review.id} className="rev"><b>{review.name}</b> <Stars rating={review.rating} /><p>{review.comment}</p></div>)
+        : <p className="notice">Memuat…</p>)}
+    </>
+  );
+}
 
 export function Product() {
   const { id } = useParams();
-  const [p, err] = useFetch('/api/products/' + id);
-  const [rev] = useFetch(`/api/products/${id}/reviews`);
-  const dispatch = useDispatch();
-  const nav = useNavigate();
-  const [qty, setQty] = useState(1), [ci, setCi] = useState(0), [gi, setGi] = useState(0), [tab, setTab] = useState('d');
+  const [product, error] = useFetch(fetchProduct, id);
+  const [reviews] = useFetch(fetchProductReviews, id);
+
   return (
     <section className="wrap">
-      <Status data={p} error={err}>
-        {p && (() => { const c = p.colors[ci], seeds = [p.id, p.id + 11, p.id + 23].slice(0, p.photos || 1); return (
-          <>
-            <p className="crumb"><Link to="/">Home</Link> / <Link to="/toko">Shop</Link> / {p.name}</p>
-            <div className="detail">
-              <div className="gallery" style={seeds.length > 1 ? undefined : { gridTemplateColumns: '1fr' }}>
-                {seeds.length > 1 && <div className="thumbs">{seeds.map((s, i) => <button key={s} aria-label={`Foto ${i + 1}`} className={gi === i ? 'on' : ''} onClick={() => setGi(i)}><Pic hex={c.hex} seed={s} src={`/foto/${p.id}-${i + 1}.jpg`} /></button>)}</div>}
-                <Pic hex={c.hex} seed={seeds[gi]} src={`/foto/${p.id}-${gi + 1}.jpg`} big />
-              </div>
-              <div>
-                <h1 className="page-title">{p.name}</h1>
-                <p className="price big">{rupiah(p.price)} <span className={'badge' + (p.stock < 1 ? ' out' : '')}>{p.stock > 0 ? 'Stok Tersedia' : 'Stok Habis'}</span></p>
-                <p><Stars v={p.rating} /> <span className="muted small">{p.rating} ({p.reviews_count} ulasan)</span></p>
-                <p className="desc">{p.description}</p>
-                <p className="muted small">Pilih warna: <b>{c.name}</b></p>
-                <div className="swatches">{p.colors.map((x, i) => <button key={x.name} aria-label={x.name} aria-pressed={ci === i} className={ci === i ? 'on' : ''} style={{ background: x.hex }} onClick={() => setCi(i)} />)}</div>
-                <div className="row buy">
-                  <div className="qty"><button aria-label="Kurangi" onClick={() => setQty(Math.max(1, qty - 1))}>−</button><span>{qty}</span><button aria-label="Tambah" onClick={() => setQty(Math.min(p.stock, qty + 1))}>+</button></div>
-                  <button className="btn" disabled={p.stock < 1} onClick={() => { dispatch(addItem({ product: p, qty, color: c })); nav('/keranjang'); }}>Tambah ke Keranjang</button>
-                </div>
-              </div>
-            </div>
-            <div className="assure">
-              <div><Ic n="truck" /><b>Pengiriman</b><span>Tersedia di seluruh Indonesia</span></div>
-              <div><Ic n="leaf" /><b>Garansi Kesegaran</b><span>Bunga segar, diganti jika layu dalam 3 hari</span></div>
-              <div><Ic n="gem" /><b>Kualitas Terjamin</b><span>Dirangkai handmade dari bunga pilihan</span></div>
-            </div>
-            <div className="tabs">{[['d', 'Deskripsi'], ['i', 'Informasi Produk'], ['u', 'Ulasan']].map(([k, l]) => <button key={k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>{l}</button>)}</div>
-            {tab === 'd' && <p className="desc">{p.description} Setiap buket dibuat secara handmade sehingga memiliki sentuhan unik dan khusus. Tambahkan pesan kartu ucapan saat checkout.</p>}
-            {tab === 'i' && <dl className="info"><dt>Momen</dt><dd>{p.moment}</dd><dt>Gaya</dt><dd>{p.style}</dd><dt>Warna</dt><dd>{p.colors.map((x) => x.name).join(', ')}</dd><dt>Stok</dt><dd>{p.stock}</dd></dl>}
-            {tab === 'u' && (rev?.map((r) => <div key={r.id} className="rev"><b>{r.name}</b> <Stars v={r.rating} /><p>{r.comment}</p></div>) || <p className="notice">Memuat…</p>)}
-          </>); })()}
+      <Status data={product} error={error}>
+        {product && <ProductDetail product={product} reviews={reviews} />}
       </Status>
     </section>
   );

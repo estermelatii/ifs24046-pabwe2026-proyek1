@@ -51,7 +51,7 @@ describe("authSlice", () => {
   it("authenticate menyimpan token dan user", async () => {
     mockFetch([["POST /api/auth/login", { token: "t1", user }]]);
     const s = makeStore();
-    await s.dispatch(authenticate({ mode: "login", body: {} }));
+    await s.dispatch(authenticate({ mode: "login", credentials: {} }));
     expect(s.getState().auth.user).toEqual(user);
     expect(localStorage.getItem("fg-token")).toBe("t1");
   });

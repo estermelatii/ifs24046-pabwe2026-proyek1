@@ -1,27 +1,36 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { rupiah } from '../helpers/api.js';
+import { rupiah } from '../helpers/format.js';
 import Bouquet from './Bouquet.jsx';
 
-export const Status = ({ data, error, children }) =>
-  error ? <p className="notice">{error}. Pastikan API berjalan lalu muat ulang halaman.</p> : !data ? <p className="notice">Memuat…</p> : children;
-export const Stars = ({ v }) => <span className="stars" aria-label={`Rating ${v}`}>{'★'.repeat(Math.round(v))}{'☆'.repeat(5 - Math.round(v))}</span>;
+export const Status = ({ data, error, children }) => {
+  if (error) return <p className="notice">{error}. Pastikan API berjalan lalu muat ulang halaman.</p>;
+  if (!data) return <p className="notice">Memuat…</p>;
+  return children;
+};
+
+export const Stars = ({ rating }) => {
+  const filled = Math.round(rating);
+  return <span className="stars" aria-label={`Rating ${rating}`}>{'★'.repeat(filled)}{'☆'.repeat(5 - filled)}</span>;
+};
+
 export function Pic({ hex, seed, big, src }) {
-  const [bad, setBad] = useState(false);
-  const photo = src && !bad;
+  const [photoFailed, setPhotoFailed] = useState(false);
+  const showPhoto = src && !photoFailed;
   return (
-    <div className={'pic' + (big ? ' big' : '') + (photo ? ' photo' : '')} style={{ background: `radial-gradient(circle at 50% 35%, ${hex}55, #3a0509 78%)` }}>
-      {photo ? <img src={src} alt="" loading="lazy" onError={() => setBad(true)} /> : <Bouquet color={hex} seed={seed} />}
+    <div className={'pic' + (big ? ' big' : '') + (showPhoto ? ' photo' : '')} style={{ background: `radial-gradient(circle at 50% 35%, ${hex}55, #3a0509 78%)` }}>
+      {showPhoto ? <img src={src} alt="" loading="lazy" onError={() => setPhotoFailed(true)} /> : <Bouquet color={hex} seed={seed} />}
     </div>
   );
 }
-export function Card({ p }) {
+
+export function Card({ product }) {
   return (
-    <Link to={`/produk/${p.id}`} className="card">
-      <Pic hex={p.colors[0].hex} seed={p.id} src={`/foto/${p.id}-1.jpg`} />
-      <h3>{p.name}</h3>
-      <p className="muted small">{p.moment} · {p.style}</p>
-      <p className="price">{rupiah(p.price)}</p>
+    <Link to={`/produk/${product.id}`} className="card">
+      <Pic hex={product.colors[0].hex} seed={product.id} src={`/foto/${product.id}-1.jpg`} />
+      <h3>{product.name}</h3>
+      <p className="muted small">{product.moment} · {product.style}</p>
+      <p className="price">{rupiah(product.price)}</p>
     </Link>
   );
 }

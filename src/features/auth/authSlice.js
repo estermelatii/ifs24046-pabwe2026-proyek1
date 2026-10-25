@@ -1,17 +1,18 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { api } from '../../helpers/api.js';
+import { STORAGE_KEYS } from '../../config.js';
+import { authenticateUser, fetchCurrentUser } from '../../services/authService.js';
 
-export const authenticate = createAsyncThunk('auth/authenticate', async ({ mode, body }) => {
-  const r = await api('/api/auth/' + mode, { method: 'POST', body });
-  localStorage.setItem('fg-token', r.token);
-  return r.user;
+export const authenticate = createAsyncThunk('auth/authenticate', async ({ mode, credentials }) => {
+  const session = await authenticateUser(mode, credentials);
+  localStorage.setItem(STORAGE_KEYS.token, session.token);
+  return session.user;
 });
 
 export const fetchMe = createAsyncThunk('auth/fetchMe', async (_, { rejectWithValue }) => {
   try {
-    return await api('/api/auth/me');
+    return await fetchCurrentUser();
   } catch {
-    localStorage.removeItem('fg-token');
+    localStorage.removeItem(STORAGE_KEYS.token);
     return rejectWithValue(null);
   }
 });
@@ -32,7 +33,8 @@ const authSlice = createSlice({
 });
 
 export const logout = () => (dispatch) => {
-  localStorage.removeItem('fg-token');
+  localStorage.removeItem(STORAGE_KEYS.token);
   dispatch(authSlice.actions.clearUser());
 };
+
 export default authSlice.reducer;

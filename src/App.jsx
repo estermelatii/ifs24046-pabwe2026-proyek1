@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, NavLink, Route, Routes, useNavigate } from 'react-router-dom';
-import { selectCount } from './features/cart/cartSlice.js';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { Route, Routes } from 'react-router-dom';
+import { STORAGE_KEYS } from './config.js';
 import { fetchMe } from './features/auth/authSlice.js';
-import { Ic } from './components/Bouquet.jsx';
+import { Header } from './components/layout/Header.jsx';
+import { Footer } from './components/layout/Footer.jsx';
+import { TabBar } from './components/layout/TabBar.jsx';
 import { Home } from './features/home/Home.jsx';
 import { Shop } from './features/catalog/Shop.jsx';
 import { Product } from './features/catalog/Product.jsx';
@@ -19,31 +21,15 @@ import { Contact } from './features/static/Contact.jsx';
 
 export default function App() {
   const dispatch = useDispatch();
-  const count = useSelector(selectCount);
-  const user = useSelector((s) => s.auth.user);
+
+  // Pulihkan sesi login bila token masih tersimpan.
   useEffect(() => {
-    if (localStorage.getItem('fg-token')) dispatch(fetchMe());
+    if (localStorage.getItem(STORAGE_KEYS.token)) dispatch(fetchMe());
   }, [dispatch]);
-  const nav = useNavigate();
-  const [open, setOpen] = useState(false);
-  const [q, setQ] = useState('');
-  const links = [['/', 'Home'], ['/toko', 'Shop'], ['/find', 'Find Your Bloom'], ['/about', 'About'], ['/kontak', 'Contact']];
+
   return (
     <>
-      <header className="nav">
-        <Link to="/" className="logo">FloraGift</Link>
-        <nav className="menu">{links.map(([to, l]) => <NavLink key={to} to={to} end={to === '/'}>{l}</NavLink>)}</nav>
-        <div className="icons">
-          {open && (
-            <form onSubmit={(e) => { e.preventDefault(); nav('/toko?q=' + encodeURIComponent(q)); setOpen(false); }}>
-              <input autoFocus className="mini-search" placeholder="Cari buket" value={q} onChange={(e) => setQ(e.target.value)} />
-            </form>
-          )}
-          <button aria-label="Cari" onClick={() => setOpen(!open)}><Ic n="search" /></button>
-          <Link to="/akun" aria-label="Akun">{user ? <span className="avatar">{user.name.charAt(0).toUpperCase()}</span> : <Ic n="user" />}</Link>
-          <Link to="/keranjang" aria-label="Keranjang" className="bag"><Ic n="bag" />{count > 0 && <b>{count}</b>}</Link>
-        </div>
-      </header>
+      <Header />
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -62,20 +48,8 @@ export default function App() {
           <Route path="/kontak" element={<Contact />} />
         </Routes>
       </main>
-      <footer className="foot">
-        <div><div className="logo">FloraGift</div><p>Little flowers, meaningful moments.</p></div>
-        <div><h4 aria-level="2">Quick Links</h4><Link to="/">Home</Link><Link to="/toko">Shop</Link><Link to="/find">Find Your Bloom</Link><Link to="/about">About</Link></div>
-        <div><h4 aria-level="2">Customer Care</h4><Link to="/kontak">Contact</Link><Link to="/lacak">Track Order</Link><Link to="/riwayat">Order History</Link></div>
-        <div><h4 aria-level="2">Follow Us</h4><div className="social"><a href="https://instagram.com"><span aria-hidden="true">IG</span><span className="sr-only">Instagram</span></a><a href="https://tiktok.com"><span aria-hidden="true">TT</span><span className="sr-only">TikTok</span></a><a href="https://wa.me/6282160183466"><span aria-hidden="true">WA</span><span className="sr-only">WhatsApp</span></a></div></div>
-        <p className="copy">© 2026 FloraGift. All rights reserved.</p>
-      </footer>
-      <nav className="tabbar">
-        <NavLink to="/" end><Ic n="home" />Home</NavLink>
-        <NavLink to="/toko"><Ic n="shop" />Shop</NavLink>
-        <NavLink to="/find"><Ic n="heart" />Find</NavLink>
-        <NavLink to="/keranjang"><Ic n="bag" />Cart{count > 0 && <b>{count}</b>}</NavLink>
-        <NavLink to="/akun"><Ic n="user" />Profile</NavLink>
-      </nav>
+      <Footer />
+      <TabBar />
     </>
   );
 }

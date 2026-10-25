@@ -1,9 +1,20 @@
 import { useEffect, useState } from 'react';
-import { api } from '../helpers/api.js';
 
-export default function useFetch(path) {
+// Memanggil fungsi service dan mengembalikan [data, error].
+// Respons yang datang setelah komponen unmount atau parameter berubah diabaikan.
+export default function useFetch(fetcher, ...params) {
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
-  useEffect(() => { setData(null); setError(''); api(path).then(setData).catch((e) => setError(e.message)); }, [path]);
+
+  useEffect(() => {
+    let ignored = false;
+    setData(null);
+    setError('');
+    fetcher(...params)
+      .then((result) => { if (!ignored) setData(result); })
+      .catch((err) => { if (!ignored) setError(err.message); });
+    return () => { ignored = true; };
+  }, [fetcher, ...params]);
+
   return [data, error];
 }

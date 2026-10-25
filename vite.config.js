@@ -13,12 +13,6 @@ export default defineConfig(({ mode }) => {
     preview: {
       port: Number(env.APP_PORT) || 5173,
     },
-    define: {
-      // Alamat back-end (Express.js). Ubah lewat VITE_API_URL di .env atau ganti nilai bawaan ini.
-      API_BASEURL: JSON.stringify(
-        env.VITE_API_URL || "https://ifs24046-pabwe2026-proyek1-be.onrender.com"
-      ),
-    },
     test: {
       globals: true,
       environment: "jsdom",
@@ -30,6 +24,7 @@ export default defineConfig(({ mode }) => {
         exclude: [
           "node_modules/**",
           "src/main.jsx",
+          "src/config.js",
           "src/setupTests.js",
           "src/test-utils.jsx",
           "src/**/*.test.{js,jsx}",

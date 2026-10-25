@@ -1,65 +1,146 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { api, rupiah } from '../../helpers/api.js';
-import { clearCart, selectSubtotal } from '../../features/cart/cartSlice.js';
+import { rupiah } from '../../helpers/format.js';
+import { COURIERS, PAYMENT_METHODS } from '../../helpers/constants.js';
+import { createOrder } from '../../services/orderService.js';
+import { clearCart, selectSubtotal } from '../cart/cartSlice.js';
 
-const COUR = [['JNE', 'JNE Reguler', 15000, '2–3 hari'], ['JNT', 'J&T Express', 18000, '2 hari'], ['GoSend', 'GoSend Instant', 25000, 'Hari ini']];
+const STEP_LABELS = ['Informasi', 'Pengiriman', 'Pembayaran'];
+const LAST_STEP = STEP_LABELS.length;
+
+const todayIsoDate = () => new Date().toISOString().slice(0, 10);
+
+const submitLabel = (step, isSubmitting) => {
+  if (step === 1) return 'Lanjut ke Pengiriman';
+  if (step === 2) return 'Lanjut ke Pembayaran';
+  return isSubmitting ? 'Memproses…' : 'Bayar & Buat Pesanan';
+};
+
+const buildOrderPayload = (form, cartItems) => ({
+  ...form,
+  items: cartItems.map((item) => ({ product_id: item.id, quantity: item.qty, color: item.color.name })),
+});
+
+function CustomerStep({ form, onInput }) {
+  return (
+    <>
+      <h3>Informasi Pelanggan</h3>
+      <label>Nama lengkap<input required value={form.customer_name} onChange={onInput('customer_name')} /></label>
+      <label>Nomor telepon<input required inputMode="tel" value={form.phone} onChange={onInput('phone')} /></label>
+      <label>Email<input required type="email" value={form.email} onChange={onInput('email')} /></label>
+    </>
+  );
+}
+
+function ShippingStep({ form, onInput, onSelect }) {
+  return (
+    <>
+      <h3>Pengiriman</h3>
+      <label>Alamat lengkap<textarea required rows="3" value={form.address} onChange={onInput('address')} /></label>
+      <label>Kota<input required value={form.city} onChange={onInput('city')} /></label>
+      <fieldset>
+        <legend>Pilihan kurir</legend>
+        {COURIERS.map((courier) => (
+          <label key={courier.id} className="chk">
+            <input type="radio" name="courier" checked={form.courier === courier.id} onChange={() => onSelect('courier', courier.id)} />
+            {courier.name} · {rupiah(courier.cost)} · {courier.eta}
+          </label>
+        ))}
+      </fieldset>
+      <label>Tanggal pengiriman<input required type="date" min={todayIsoDate()} value={form.delivery_date} onChange={onInput('delivery_date')} /></label>
+      <label>Pesan kartu ucapan (opsional)<textarea rows="2" value={form.card_message} onChange={onInput('card_message')} /></label>
+    </>
+  );
+}
+
+function PaymentStep({ form, onSelect }) {
+  return (
+    <>
+      <h3>Pembayaran</h3>
+      <fieldset>
+        <legend>Metode pembayaran</legend>
+        {PAYMENT_METHODS.map((method) => (
+          <label key={method} className="chk">
+            <input type="radio" name="payment" checked={form.payment_method === method} onChange={() => onSelect('payment_method', method)} />
+            {method}
+          </label>
+        ))}
+      </fieldset>
+      <p className="muted small">Pembayaran bersifat simulasi untuk keperluan tugas. Tidak ada transaksi uang sungguhan.</p>
+      <p className="muted">Dikirim ke: {form.address}, {form.city} pada {form.delivery_date}</p>
+    </>
+  );
+}
+
 export function Checkout() {
   const dispatch = useDispatch();
-  const items = useSelector((s) => s.cart.items);
+  const navigate = useNavigate();
+  const cartItems = useSelector((state) => state.cart.items);
   const subtotal = useSelector(selectSubtotal);
-  const user = useSelector((s) => s.auth.user);
-  const nav = useNavigate();
-  const [step, setStep] = useState(1), [busy, setBusy] = useState(false), [error, setError] = useState('');
-  const [f, setF] = useState({ customer_name: user?.name || '', phone: '', email: user?.email || '', address: '', city: '', courier: 'JNE', delivery_date: '', card_message: '', payment_method: 'Transfer Bank' });
-  const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
-  if (!items.length) return <section className="wrap"><h1 className="page-title">Checkout</h1><p className="notice">Keranjang kosong. <Link to="/toko">Pilih buket</Link></p></section>;
-  const ship = COUR.find((c) => c[0] === f.courier)[2];
-  const submit = async (e) => {
-    e.preventDefault();
-    if (step < 3) return setStep(step + 1);
-    setBusy(true); setError('');
+  const user = useSelector((state) => state.auth.user);
+  const [step, setStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [form, setForm] = useState({
+    customer_name: user?.name || '',
+    phone: '',
+    email: user?.email || '',
+    address: '',
+    city: '',
+    courier: COURIERS[0].id,
+    delivery_date: '',
+    card_message: '',
+    payment_method: PAYMENT_METHODS[0],
+  });
+
+  const setField = (field, value) => setForm({ ...form, [field]: value });
+  const handleInput = (field) => (event) => setField(field, event.target.value);
+
+  if (!cartItems.length) {
+    return (
+      <section className="wrap">
+        <h1 className="page-title">Checkout</h1>
+        <p className="notice">Keranjang kosong. <Link to="/toko">Pilih buket</Link></p>
+      </section>
+    );
+  }
+
+  const shippingCost = COURIERS.find((courier) => courier.id === form.courier).cost;
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (step < LAST_STEP) return setStep(step + 1);
+    setIsSubmitting(true);
+    setError('');
     try {
-      const o = await api('/api/orders', { method: 'POST', body: { ...f, items: items.map((i) => ({ product_id: i.id, quantity: i.qty, color: i.color.name })) } });
-      dispatch(clearCart()); nav('/sukses/' + o.code);
-    } catch (er) { setError(er.message); setBusy(false); }
+      const order = await createOrder(buildOrderPayload(form, cartItems));
+      dispatch(clearCart());
+      navigate('/sukses/' + order.code);
+    } catch (err) {
+      setError(err.message);
+      setIsSubmitting(false);
+    }
   };
+
   return (
     <section className="wrap">
       <h1 className="page-title">Checkout</h1>
-      <ol className="ck">{['Informasi', 'Pengiriman', 'Pembayaran'].map((s, i) => <li key={s} className={step > i ? 'done' : ''}><i>{i + 1}</i>{s}</li>)}</ol>
-      <form className="cols" onSubmit={submit}>
+      <ol className="ck">{STEP_LABELS.map((label, index) => <li key={label} className={step > index ? 'done' : ''}><i>{index + 1}</i>{label}</li>)}</ol>
+      <form className="cols" onSubmit={handleSubmit}>
         <div className="form">
-          {step === 1 && <>
-            <h3>Informasi Pelanggan</h3>
-            <label>Nama lengkap<input required value={f.customer_name} onChange={set('customer_name')} /></label>
-            <label>Nomor telepon<input required inputMode="tel" value={f.phone} onChange={set('phone')} /></label>
-            <label>Email<input required type="email" value={f.email} onChange={set('email')} /></label>
-          </>}
-          {step === 2 && <>
-            <h3>Pengiriman</h3>
-            <label>Alamat lengkap<textarea required rows="3" value={f.address} onChange={set('address')} /></label>
-            <label>Kota<input required value={f.city} onChange={set('city')} /></label>
-            <fieldset><legend>Pilihan kurir</legend>{COUR.map(([id, n, c, e]) => <label key={id} className="chk"><input type="radio" name="c" checked={f.courier === id} onChange={() => setF({ ...f, courier: id })} />{n} · {rupiah(c)} · {e}</label>)}</fieldset>
-            <label>Tanggal pengiriman<input required type="date" min={new Date().toISOString().slice(0, 10)} value={f.delivery_date} onChange={set('delivery_date')} /></label>
-            <label>Pesan kartu ucapan (opsional)<textarea rows="2" value={f.card_message} onChange={set('card_message')} /></label>
-          </>}
-          {step === 3 && <>
-            <h3>Pembayaran</h3>
-            <fieldset><legend>Metode pembayaran</legend>{['Transfer Bank', 'QRIS', 'Bayar di Tempat (COD)'].map((m) => <label key={m} className="chk"><input type="radio" name="p" checked={f.payment_method === m} onChange={() => setF({ ...f, payment_method: m })} />{m}</label>)}</fieldset>
-            <p className="muted small">Pembayaran bersifat simulasi untuk keperluan tugas. Tidak ada transaksi uang sungguhan.</p>
-            <p className="muted">Dikirim ke: {f.address}, {f.city} pada {f.delivery_date}</p>
-          </>}
+          {step === 1 && <CustomerStep form={form} onInput={handleInput} />}
+          {step === 2 && <ShippingStep form={form} onInput={handleInput} onSelect={setField} />}
+          {step === 3 && <PaymentStep form={form} onSelect={setField} />}
         </div>
         <aside className="box">
           <h3>Pesananmu</h3>
-          {items.map((i) => <p className="between" key={i.key}><span>{i.name} ({i.color.name}) × {i.qty}</span><span>{rupiah(i.price * i.qty)}</span></p>)}
+          {cartItems.map((item) => <p className="between" key={item.key}><span>{item.name} ({item.color.name}) × {item.qty}</span><span>{rupiah(item.price * item.qty)}</span></p>)}
           <p className="between"><span>Subtotal</span><span>{rupiah(subtotal)}</span></p>
-          <p className="between"><span>Ongkir</span><span>{rupiah(ship)}</span></p>
-          <p className="between total"><span>Total</span><b>{rupiah(subtotal + ship)}</b></p>
+          <p className="between"><span>Ongkir</span><span>{rupiah(shippingCost)}</span></p>
+          <p className="between total"><span>Total</span><b>{rupiah(subtotal + shippingCost)}</b></p>
           {error && <p className="error">{error}</p>}
-          <button className="btn full" disabled={busy}>{step === 1 ? 'Lanjut ke Pengiriman' : step === 2 ? 'Lanjut ke Pembayaran' : busy ? 'Memproses…' : 'Bayar & Buat Pesanan'}</button>
+          <button className="btn full" disabled={isSubmitting}>{submitLabel(step, isSubmitting)}</button>
           {step > 1 && <button type="button" className="link" onClick={() => setStep(step - 1)}>Kembali</button>}
         </aside>
       </form>
