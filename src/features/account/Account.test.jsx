@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Account } from "./Account.jsx";
@@ -73,4 +73,39 @@ describe("Account", () => {
     renderWithProviders(<Account />, { preloadedState: userState });
     expect(await screen.findByText(/belum punya pesanan/)).toBeInTheDocument();
   });
+  it("sambutan merespons keyboard Enter, Space, dan Escape", async () => {
+    mockFetch([["POST /api/auth/login", { token: "t", user }], ...dash]);
+    renderWithProviders(<Account />);
+    fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ani@mail.com" } });
+    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "rahasia1" } });
+    await userEvent.click(screen.getByRole("button", { name: "Masuk" }));
+    const dialog = await screen.findByRole("dialog");
+    fireEvent.keyDown(dialog, { key: "a" });
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    fireEvent.keyDown(dialog, { key: "Enter" });
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("sambutan ditutup dengan Space dan Escape", async () => {
+    mockFetch([["POST /api/auth/login", { token: "t", user }], ...dash]);
+    const { unmount } = renderWithProviders(<Account />);
+    fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ani@mail.com" } });
+    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "rahasia1" } });
+    await userEvent.click(screen.getByRole("button", { name: "Masuk" }));
+    fireEvent.keyDown(await screen.findByRole("dialog"), { key: " " });
+    expect(screen.queryByRole("dialog")).toBeNull();
+    unmount();
+
+    mockFetch([["POST /api/auth/login", { token: "t", user }], ...dash]);
+    renderWithProviders(<Account />);
+    fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ani@mail.com" } });
+    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "rahasia1" } });
+    await userEvent.click(screen.getByRole("button", { name: "Masuk" }));
+    fireEvent.keyDown(await screen.findByRole("dialog"), { key: "Escape" });
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
 });
+
+
+
+
