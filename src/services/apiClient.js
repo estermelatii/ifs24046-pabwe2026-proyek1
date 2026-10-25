@@ -11,8 +11,9 @@ export async function api(path, { method, body } = {}) {
   const data = await response.json();
   if (!response.ok) {
     // Token ditolak server: beri tahu aplikasi agar sesi dibersihkan.
-    if (response.status === 401 && token) window.dispatchEvent(new Event(AUTH_EXPIRED_EVENT));
+    if (response.status === 401 && token) globalThis.dispatchEvent(new Event(AUTH_EXPIRED_EVENT));
     throw new Error(data.error || 'Terjadi kesalahan');
   }
   return data;
 }
+

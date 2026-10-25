@@ -57,7 +57,7 @@ export function Shop() {
   });
   const goToPage = (page) => {
     updateParams((next) => next.set('page', page));
-    window.scrollTo(0, 0);
+    globalThis.scrollTo(0, 0);
   };
 
   const pageNumbers = catalog ? Array.from({ length: catalog.pages }, (_, index) => index + 1) : [];
@@ -106,5 +106,6 @@ export function Shop() {
     </section>
   );
 }
+
 
 
