@@ -64,9 +64,9 @@ export default function App() {
       </main>
       <footer className="foot">
         <div><div className="logo">FloraGift</div><p>Little flowers, meaningful moments.</p></div>
-        <div><h4>Quick Links</h4><Link to="/">Home</Link><Link to="/toko">Shop</Link><Link to="/find">Find Your Bloom</Link><Link to="/about">About</Link></div>
-        <div><h4>Customer Care</h4><Link to="/kontak">Contact</Link><Link to="/lacak">Track Order</Link><Link to="/riwayat">Order History</Link></div>
-        <div><h4>Follow Us</h4><div className="social"><a href="https://instagram.com" aria-label="Instagram (IG)">IG</a><a href="https://tiktok.com" aria-label="TikTok (TT)">TT</a><a href="https://wa.me/6282160183466" aria-label="WhatsApp (WA)">WA</a></div></div>
+        <div><h4 aria-level="2">Quick Links</h4><Link to="/">Home</Link><Link to="/toko">Shop</Link><Link to="/find">Find Your Bloom</Link><Link to="/about">About</Link></div>
+        <div><h4 aria-level="2">Customer Care</h4><Link to="/kontak">Contact</Link><Link to="/lacak">Track Order</Link><Link to="/riwayat">Order History</Link></div>
+        <div><h4 aria-level="2">Follow Us</h4><div className="social"><a href="https://instagram.com"><span aria-hidden="true">IG</span><span className="sr-only">Instagram</span></a><a href="https://tiktok.com"><span aria-hidden="true">TT</span><span className="sr-only">TikTok</span></a><a href="https://wa.me/6282160183466"><span aria-hidden="true">WA</span><span className="sr-only">WhatsApp</span></a></div></div>
         <p className="copy">© 2026 FloraGift. All rights reserved.</p>
       </footer>
       <nav className="tabbar">

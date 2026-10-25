@@ -30,7 +30,7 @@ export function Find() {
       <div className="box quiz">
         <div className="progress"><i style={{ width: `${((step + 1) / Q.length) * 100}%` }} /></div>
         <p className="muted small">Pertanyaan {step + 1} dari {Q.length}</p>
-        <h3>{q.t}</h3>
+        <h3 aria-level="2">{q.t}</h3>
         <div className="opts">{q.o.map((o) => <button key={o.v} className={String(ans[q.k]) === String(o.v) ? 'on' : ''} onClick={() => setAns({ ...ans, [q.k]: o.v })}>{o.l}</button>)}</div>
         {err && <p className="error">{err}</p>}
         <div className="between">

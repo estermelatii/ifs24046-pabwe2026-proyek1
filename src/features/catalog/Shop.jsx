@@ -20,10 +20,10 @@ export function Shop() {
       <p className="muted">Temukan buket mini yang sesuai dengan momenmu.{g('q') && ` Hasil untuk “${g('q')}”.`}</p>
       <div className="shop">
         <aside className="filters">
-          <h4>Harga</h4>{RANGES.map(([l, a, b]) => <Chk key={l} on={g('min') === String(a)} onClick={() => range(a, b)}>{l}</Chk>)}
-          <h4>Warna</h4><div className="swatches">{Object.entries(COLORS).map(([n, h]) => <button key={n} title={n} aria-label={n} aria-pressed={g('color') === n} className={g('color') === n ? 'on' : ''} style={{ background: h }} onClick={() => upd('color', n)} />)}</div>
-          <h4>Gaya</h4>{['Cute', 'Soft', 'Elegant', 'Cheerful'].map((s) => <Chk key={s} on={g('style') === s} onClick={() => upd('style', s)}>{s}</Chk>)}
-          <h4>Momen</h4>{cats?.map((c) => <Chk key={c.id} on={g('moment') === String(c.id)} onClick={() => upd('moment', c.id)}>{c.name}</Chk>)}
+          <h4 aria-level="2">Harga</h4>{RANGES.map(([l, a, b]) => <Chk key={l} on={g('min') === String(a)} onClick={() => range(a, b)}>{l}</Chk>)}
+          <h4 aria-level="2">Warna</h4><div className="swatches">{Object.entries(COLORS).map(([n, h]) => <button key={n} title={n} aria-label={n} aria-pressed={g('color') === n} className={g('color') === n ? 'on' : ''} style={{ background: h }} onClick={() => upd('color', n)} />)}</div>
+          <h4 aria-level="2">Gaya</h4>{['Cute', 'Soft', 'Elegant', 'Cheerful'].map((s) => <Chk key={s} on={g('style') === s} onClick={() => upd('style', s)}>{s}</Chk>)}
+          <h4 aria-level="2">Momen</h4>{cats?.map((c) => <Chk key={c.id} on={g('moment') === String(c.id)} onClick={() => upd('moment', c.id)}>{c.name}</Chk>)}
           {sp.toString() && <button className="link" onClick={() => setSp({})}>Hapus semua filter</button>}
         </aside>
         <div>

@@ -197,3 +197,6 @@ h2{font-size:2.3rem}.page-title{color:#fff4ee}
 .hero-left::before{content:'';position:absolute;inset:0;background:url(/foto/25-1.jpg) 0 62%/cover;opacity:.32;filter:blur(2.5px) saturate(1.25);-webkit-mask-image:linear-gradient(90deg,#000 0,transparent 82%);mask-image:linear-gradient(90deg,#000 0,transparent 82%)}
 .hero-left::after{content:'';position:absolute;left:-160px;bottom:-220px;width:560px;height:560px;border-radius:50%;border:1px solid rgba(241,195,184,.16);box-shadow:0 0 0 46px rgba(241,195,184,.04),0 0 0 92px rgba(241,195,184,.025);pointer-events:none}
 .hero-copy{position:relative;z-index:2}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.social a{position:relative}
