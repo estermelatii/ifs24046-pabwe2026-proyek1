@@ -16,14 +16,16 @@ const describeItems = (order) => order.items.map((item) => `${item.name} ×${ite
 function WelcomeOverlay({ mode, name, onDismiss }) {
   const isRegister = mode === "register";
   return (
-    <dialog className="welcome" open aria-label={isRegister ? "Akun berhasil dibuat" : "Berhasil masuk"} onClick={onDismiss}>
-      <div onClick={(event) => event.stopPropagation()}>
+    <dialog className="welcome" open aria-label={isRegister ? "Akun berhasil dibuat" : "Berhasil masuk"}>
+      <div>
         <span className="eyebrow">{isRegister ? "Akun berhasil dibuat" : "Berhasil masuk"}</span>
         <h1>{isRegister ? "Selamat datang," : "Selamat datang kembali,"}<br /><em>{name}</em></h1>
         <i className="wline" />
         <p>{isRegister ? "Akunmu sudah siap. Temukan buket pertamamu dan rayakan momen spesialmu." : "Senang melihatmu lagi. Buket cantik berikutnya sudah menunggu."}</p>
-        <Link to="/toko" className="btn lg" onClick={onDismiss}>Mulai Jelajahi</Link>
-        <button type="button" className="btn ghost" onClick={onDismiss}>Tutup</button>
+        <div className="row" style={{ justifyContent: "center", gap: "12px" }}>
+          <Link to="/toko" className="btn lg" onClick={onDismiss}>Mulai Jelajahi</Link>
+          <button type="button" className="btn ghost" onClick={onDismiss}>Tutup</button>
+        </div>
       </div>
     </dialog>
   );
@@ -99,6 +101,7 @@ AccountDashboard.propTypes = {
   welcomeMode: PropTypes.string,
   onDismissWelcome: PropTypes.func,
 };
+
 
 
 

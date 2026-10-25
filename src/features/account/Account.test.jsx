@@ -84,17 +84,8 @@ describe("Account", () => {
     await userEvent.click(screen.getByRole("button", { name: "Tutup" }));
     expect(screen.queryByRole("dialog")).toBeNull();
   });
-  it("sambutan ditutup lewat klik backdrop", async () => {
-    mockFetch([["POST /api/auth/login", { token: "t", user }], ...dash]);
-    renderWithProviders(<Account />);
-    fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ani@mail.com" } });
-    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "rahasia1" } });
-    await userEvent.click(screen.getByRole("button", { name: "Masuk" }));
-    const dialog = await screen.findByRole("dialog");
-    fireEvent.click(dialog);
-    expect(screen.queryByRole("dialog")).toBeNull();
-  });
 });
+
 
 
 
