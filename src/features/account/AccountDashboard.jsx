@@ -16,25 +16,16 @@ const describeItems = (order) => order.items.map((item) => `${item.name} ×${ite
 function WelcomeOverlay({ mode, name, onDismiss }) {
   const isRegister = mode === "register";
   return (
-    <div
-      className="welcome"
-      role="dialog"
-      aria-modal="true"
-      aria-label={isRegister ? "Akun berhasil dibuat" : "Berhasil masuk"}
-      tabIndex={0}
-      onClick={onDismiss}
-      onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " " || event.key === "Escape") onDismiss();
-      }}
-    >
-      <div>
+    <dialog className="welcome" open aria-label={isRegister ? "Akun berhasil dibuat" : "Berhasil masuk"} onClick={onDismiss} onCancel={(event) => { event.preventDefault(); onDismiss(); }}>
+      <div onClick={(event) => event.stopPropagation()}>
         <span className="eyebrow">{isRegister ? "Akun berhasil dibuat" : "Berhasil masuk"}</span>
         <h1>{isRegister ? "Selamat datang," : "Selamat datang kembali,"}<br /><em>{name}</em></h1>
         <i className="wline" />
         <p>{isRegister ? "Akunmu sudah siap. Temukan buket pertamamu dan rayakan momen spesialmu." : "Senang melihatmu lagi. Buket cantik berikutnya sudah menunggu."}</p>
-        <Link to="/toko" className="btn lg">Mulai Jelajahi</Link>
+        <Link to="/toko" className="btn lg" onClick={onDismiss}>Mulai Jelajahi</Link>
+        <button type="button" className="btn ghost" onClick={onDismiss}>Tutup</button>
       </div>
-    </div>
+    </dialog>
   );
 }
 
@@ -108,4 +99,5 @@ AccountDashboard.propTypes = {
   welcomeMode: PropTypes.string,
   onDismissWelcome: PropTypes.func,
 };
+
 
